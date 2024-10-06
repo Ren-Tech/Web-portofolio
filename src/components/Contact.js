@@ -2,12 +2,15 @@ import React from "react";
 
 const Contact = () => {
   return (
-    <section id="contact" className="bg-gray-100 py-16">
-      <h2 className="text-3xl font-bold text-center text-gray-800">
-        Contact Me
-      </h2>
-      <div className="flex justify-center mt-8">
-        <form className="w-full max-w-lg bg-white p-8 rounded-lg shadow-md">
+    <section id="contact" className="bg-[#111827] py-16">
+      <h2 className="text-3xl font-bold text-center text-white">Contact Me</h2>
+      <h3 className="font-bold text-center text-white">
+        Wanna talk? Message me and I'll get back to you as soon as I can.
+      </h3>
+
+      {/* Adjust form container width */}
+      <div className="flex justify-center mt-8 px-4">
+        <form className="w-full max-w-3xl bg-white p-8 rounded-lg shadow-md">
           <div className="mb-6">
             <label className="block text-gray-700 font-bold mb-2">Name</label>
             <input
