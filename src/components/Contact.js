@@ -3,8 +3,11 @@ import React from "react";
 const Contact = () => {
   return (
     <section id="contact" className="bg-[#111827] py-16">
-      <h2 className="text-3xl font-bold text-center text-white">Contact Me</h2>
-      <h3 className="font-bold text-center text-white">
+      <h2 className="text-4xl font-bold text-center text-white font-oswald mb-4">
+        Contact Me
+      </h2>
+
+      <h3 className="text-xl font-bold text-center text-white font-oswald">
         Wanna talk? Message me and I'll get back to you as soon as I can.
       </h3>
 

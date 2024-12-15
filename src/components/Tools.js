@@ -30,30 +30,33 @@ const tools = [
 
 const Tools = () => {
   return (
-    <section id="tools" className="bg-[#111827] py-16">
+    <section id="tools" className="bg-[#111827] py-16 px-4 md:px-16">
       <div className="text-center mb-8"></div>
 
-      <div className="flex justify-between items-start mx-16">
+      <div className="flex flex-col md:flex-row justify-between items-start">
         {/* Left side with tools text */}
-        <div className="w-1/2 pr-8">
-          <h2 className="text-2xl font-bold text-white">Tools</h2>
-          <p className="text-lg text-gray-300 mt-4">
-            Programming languages and frameworks that focus on the part of a
-            website that users can't directly see. It handles all of the
-            server-side logic such as storing of data, user authentication, file
-            storage, and more. APIs are also written at the back-end.
+        <div className="w-full md:w-1/2 mb-8 md:mb-0 md:pr-8">
+          <h2 className="text-3xl md:text-5xl font-bold font-oswald text-amber-500">
+            Tools
+          </h2>
+          <p className="text-base md:text-lg font-bold text-white mt-4 font-oswald">
+            Applications that are used to build, run, test, and deploy a
+            website. These are used to cast magic spells and start all of the
+            cooking.
           </p>
         </div>
 
         {/* Right side with tools icons */}
-        <div className="w-1/2 flex flex-wrap">
+        <div className="w-full md:w-1/2 flex flex-wrap">
           {tools.map((tool, index) => (
             <div key={index} className="m-4 flex flex-col items-center">
               {/* Icon with color */}
               <div className="text-6xl transition-transform duration-300 transform hover:scale-125">
                 {tool.icon}
               </div>
-              <p className="mt-2 text-lg text-gray-300">{tool.name}</p>
+              <p className="mt-2 text-lg text-gray-300 font-oswald">
+                {tool.name}
+              </p>
             </div>
           ))}
         </div>
