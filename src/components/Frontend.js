@@ -15,6 +15,13 @@ const frontendSkills = [
 const Frontend = () => {
   return (
     <section id="frontend" className="bg-[#111827] py-16 px-4 md:px-16">
+      <div className="text-center mb-8">
+        {/* Title and gear icon */}
+        <h2 className="text-3xl md:text-4xl font-bold font-oswald text-white">
+          List of tools I use
+        </h2>
+      </div>
+
       <div className="flex flex-col md:flex-row justify-between items-start">
         {/* Left Side - Description */}
         <div className="w-full md:w-1/2 mb-8 md:mb-0 md:pr-8">

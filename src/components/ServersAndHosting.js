@@ -1,5 +1,5 @@
 import React from "react";
-import { SiHostinger } from "react-icons/si";
+import { SiHostinger, SiUbuntu } from "react-icons/si";
 import { PiInfinityBold } from "react-icons/pi";
 import { IoLogoFirebase } from "react-icons/io5";
 
@@ -10,6 +10,7 @@ const tools = [
     name: "InfinityFree",
     icon: <PiInfinityBold className="text-purple-600" />,
   },
+  { name: "Ubuntu", icon: <SiUbuntu className="text-orange-500" /> },
 ];
 
 const ServersAndHosting = () => {

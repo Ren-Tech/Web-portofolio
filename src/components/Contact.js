@@ -13,7 +13,7 @@ const Contact = () => {
 
       {/* Adjust form container width */}
       <div className="flex justify-center mt-8 px-4">
-        <form className="w-full max-w-3xl bg-white p-8 rounded-lg shadow-md">
+        <form className="w-full max-w-3xl bg-gray-100 p-8 rounded-lg shadow-md">
           <div className="mb-6">
             <label className="block text-gray-700 font-bold mb-2">Name</label>
             <input

@@ -60,6 +60,19 @@ const Home = () => {
 
       {/* Content Container - Stacked vertically on mobile */}
       <div className="w-full flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0">
+        {/* Image - Show first on mobile, right side on desktop */}
+        <div
+          className={`order-first md:order-none w-full md:w-1/2 flex justify-center transition-opacity duration-700 ${
+            visible ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <img
+            src="/pogi.png"
+            alt="Clarence"
+            className="rounded-lg shadow-lg w-full max-w-xs md:max-w-md md:w-3/4 h-auto object-cover hover:shadow-xl transition-shadow duration-300 mb-8 md:mb-0"
+          />
+        </div>
+
         {/* Left Side - Icons and Text */}
         <div className="flex flex-col md:flex-row items-center w-full md:w-1/2">
           {/* Icons - Horizontal on mobile, vertical on desktop */}
@@ -69,13 +82,13 @@ const Home = () => {
             }`}
           >
             <a
-              href="mailto:your-email@example.com"
+              href="mailto:clarence11soriano@gmail.com"
               className="text-white hover:text-blue-600 transition duration-300"
             >
               <EmailIcon size={32} className="md:size-[48px]" />
             </a>
             <a
-              href="https://github.com/yourusername"
+              href="https://github.com/Ren-Tech"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white hover:text-blue-600 transition duration-300"
@@ -114,10 +127,9 @@ const Home = () => {
               </span>
             </p>
             <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 justify-center md:justify-start">
-              {/* Buttons - Stacked on mobile, inline on desktop */}
               <a
                 href="#projects"
-                className="inline-block px-6 md:px-10 py-3 md:py-4 bg-blue-600 text-white rounded-lg transition duration-300 ease-in-out text-base md:text-lg text-center"
+                className="inline-block px-6 md:px-10 py-3 md:py-4 bg-blue-600 text-white rounded-lg transition duration-300 ease-in-out text-base md:text-lg text-center hover:bg-blue-700 hover:scale-105 transform"
               >
                 See My Work
               </a>
@@ -129,19 +141,6 @@ const Home = () => {
               </a>
             </div>
           </div>
-        </div>
-
-        {/* Right Side - Image */}
-        <div
-          className={`w-full md:w-1/2 flex justify-center transition-opacity duration-700 ${
-            visible ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <img
-            src={"/api/placeholder/400/400"}
-            alt="Clarence"
-            className="rounded-lg shadow-lg w-full max-w-md md:w-3/4 h-auto object-cover"
-          />
         </div>
       </div>
     </section>
