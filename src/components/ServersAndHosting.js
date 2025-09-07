@@ -1,5 +1,5 @@
 import React from "react";
-import { SiHostinger, SiUbuntu } from "react-icons/si";
+import { SiHostinger, SiUbuntu, SiRender } from "react-icons/si";
 import { PiInfinityBold } from "react-icons/pi";
 import { IoLogoFirebase } from "react-icons/io5";
 
@@ -8,16 +8,24 @@ const tools = [
   { name: "Hostinger", icon: <SiHostinger />, color: "text-purple-500" },
   { name: "InfinityFree", icon: <PiInfinityBold />, color: "text-purple-400" },
   { name: "Ubuntu", icon: <SiUbuntu />, color: "text-orange-500" },
+  { name: "Render", icon: <SiRender />, color: "text-blue-400" },
 ];
 
 const ServersAndHosting = () => {
   return (
     <section
       id="servers-and-hosting"
-      className="bg-gradient-to-b from-gray-900 to-gray-800 py-20 px-4 sm:px-8 md:px-16 lg:px-24"
+      className="relative overflow-hidden bg-gradient-to-b from-[#111827] to-[#0f172a] py-20 px-4 sm:px-8 md:px-16 lg:px-24"
     >
-      <div className="max-w-7xl mx-auto">
-        {/* Section Header - Matching Style */}
+      {/* Background decorative blobs */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-10 left-16 w-80 h-80 bg-purple-500 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-24 right-16 w-96 h-96 bg-amber-500 rounded-full filter blur-3xl"></div>
+        <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 w-72 h-72 bg-blue-500 rounded-full filter blur-3xl"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 mb-4">
             Infrastructure & Deployment
@@ -76,7 +84,7 @@ const ServersAndHosting = () => {
           </div>
         </div>
 
-        {/* Matching decorative divider */}
+        {/* Decorative divider */}
         <div className="mt-16 flex justify-center">
           <div className="w-32 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-50"></div>
         </div>

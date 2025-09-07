@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import pogiImage from "../assets/pogi.png";
 import { motion } from "framer-motion";
 
-// Icons remain the same as before
+// Icons
 const EmailIcon = ({ size = 48, className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -76,42 +76,32 @@ const Home = () => {
   const pauseBetween = 2000;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisible(true);
-    }, 100);
+    const timer = setTimeout(() => setVisible(true), 100);
 
     // Typing effect
-    const typingTimer = setTimeout(
-      () => {
-        const currentText = texts[typingIndex % texts.length];
-
-        if (isDeleting) {
-          setTypingText(currentText.substring(0, typingText.length - 1));
-          if (typingText === "") {
-            setIsDeleting(false);
-            setTypingIndex((prevIndex) => prevIndex + 1);
-          }
-        } else {
-          setTypingText(currentText.substring(0, typingText.length + 1));
-          if (typingText === currentText) {
-            setTimeout(() => setIsDeleting(true), pauseBetween);
-          }
+    const typingTimer = setTimeout(() => {
+      const currentText = texts[typingIndex % texts.length];
+      if (isDeleting) {
+        setTypingText(currentText.substring(0, typingText.length - 1));
+        if (typingText === "") {
+          setIsDeleting(false);
+          setTypingIndex((prevIndex) => prevIndex + 1);
         }
-      },
-      isDeleting ? deletingSpeed : typingSpeed
-    );
+      } else {
+        setTypingText(currentText.substring(0, typingText.length + 1));
+        if (typingText === currentText) {
+          setTimeout(() => setIsDeleting(true), pauseBetween);
+        }
+      }
+    }, isDeleting ? deletingSpeed : typingSpeed);
 
     // Fetch Spotify now playing data
     const fetchNowPlaying = async () => {
       try {
         const response = await fetch("/api/spotify");
         const data = await response.json();
-
-        if (data.isPlaying) {
-          setNowPlaying(data);
-        } else {
-          setNowPlaying(null);
-        }
+        if (data.isPlaying) setNowPlaying(data);
+        else setNowPlaying(null);
       } catch (err) {
         setError("Couldn't fetch Spotify data");
         console.error(err);
@@ -131,10 +121,17 @@ const Home = () => {
   }, [typingText, typingIndex, isDeleting]);
 
   return (
-    <section className="min-h-screen bg-[#111827] flex flex-col md:flex-row justify-center items-center px-4 md:px-16 relative overflow-hidden">
+    <section className="min-h-screen bg-gradient-to-b from-[#111827] to-[#0f172a] flex flex-col md:flex-row justify-center items-center px-4 md:px-16 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500 rounded-full filter blur-3xl"></div>
+      </div>
+
       {/* Spotify Now Playing Widget */}
       <motion.div
-        className="hidden md:block absolute top-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-md max-w-xs"
+        className="hidden md:block absolute top-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-md max-w-xs z-10"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
@@ -224,7 +221,7 @@ const Home = () => {
             </a>
           </div>
 
-          {/* Line Divider */}
+          {/* Divider */}
           <div
             className={`hidden md:block w-1 h-48 bg-gray-600 opacity-50 mr-6 transition-opacity duration-700 ${
               visible ? "opacity-100" : "opacity-0"

@@ -16,9 +16,16 @@ const Frontend = () => {
   return (
     <section
       id="frontend"
-      className="bg-gradient-to-b from-gray-900 to-gray-800 py-20 px-4 sm:px-8 md:px-16 lg:px-24"
+      className="relative overflow-hidden bg-gradient-to-b from-[#111827] to-[#0f172a] py-20 px-4 sm:px-8 md:px-16 lg:px-24"
     >
-      <div className="max-w-7xl mx-auto">
+      {/* Background decorative blobs */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-cyan-500 rounded-full filter blur-3xl"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 mb-4">
@@ -79,7 +86,7 @@ const Frontend = () => {
           </div>
         </div>
 
-        {/* Additional decorative elements */}
+        {/* Decorative line */}
         <div className="mt-16 flex justify-center">
           <div className="w-32 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-50"></div>
         </div>

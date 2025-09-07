@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
 import {
   FiGithub,
   FiExternalLink,
@@ -9,7 +8,6 @@ import {
 } from "react-icons/fi";
 
 // Import images from assets folder
-// Adjust the path based on your component location relative to assets folder
 const importImage = (imageName) => {
   try {
     return require(`../assets/${imageName}`);
@@ -59,7 +57,6 @@ const allProjects = [
     category: "iot",
     year: 2023,
   },
-
   {
     id: 3,
     image: importImage("news-scraper.png"),
@@ -92,82 +89,79 @@ const allProjects = [
     category: "web",
     year: 2025,
   },
-
-{
-  id: 4,
-  image: importImage("kizuna.png"),
-  title: "Kizuna Anime Tracker",
-  projectTitle: "Cross-Platform Mobile Application",
-  description:
-    "Kizuna is a cross-platform anime tracking mobile application that provides a personalized dashboard for managing anime across categories such as Watching, Plan to Watch, and Dropped. The app empowers users to build their own library, track progress, and explore upcoming anime with an interactive calendar. It also includes advanced statistics, social ranking, and discovery features, making anime tracking engaging and interactive.",
-  features: [
-    "Dashboard with categories: Watching, Plan to Watch, Dropped",
-    "Bookmark system for creating personal anime library",
-    "Browse anime with detailed info and related anime recommendations",
-    "Calendar for upcoming anime (Monday–Sunday)",
-    "Announcements for upcoming releases",
-    "Stats: rating distribution, episode watch heatmap (per month), favorite producers & genres",
-    "User ranking system with EXP based on watched episodes",
-    "Character list for each anime",
-    "Search anime functionality",
-    "Source manager: add favorite websites for faster access",
-    "Built-in ad blocker for a smoother experience"
-  ],
-  link: "https://github.com/project-kizuna",
-  demoLink: "https://kizuna-demo.com",
-  stack: ["Flutter", "Dart", "Supabase", "AniList API", "SQLite"],
-  category: "mobile",
-  year: 2025,
-},
-
-{
-  id: 5,
-  image: importImage("berserk.png"),
-  title: "Learning Stack Management Web Application",
-  projectTitle: "Learning Management System",
-  description:
-    "A modern web-based Learning Management System (LMS) designed with dashboard animations, mobile responsiveness, and real-time communication. It enables seamless interaction between teachers, students, and parents while supporting quizzes, exams, and role-based access for administrators.",
-  features: [
-    "Dashboard with smooth animations",
-    "Mobile responsive design",
-    "Real-time chat between parents and teachers",
-    "Quizzes and exams module",
-    "Role-based accounts: Teacher, Admin, Student",
-    "Performance tracking and reports",
-    "Secure authentication system"
-  ],
-  link: "https://github.com/project-five",
-  demoLink: "https://lms-app-demo.com",
-  stack: ["React", "Node.js", "Express", "Socket.IO", "MongoDB", "TailwindCSS"],
-  category: "web",
-  year: 2025,
-},
-{
-  id: 6,
-  image: importImage("hydrofarm.png"),
-  title: "Hydro Farm Monitoring System",
-  projectTitle: "Cross-Platform IoT Web & Mobile Application",
-  description:
-    "Hydro Farm is an IoT-powered mobile and web application that monitors aquaculture water quality in real time using Arduino Uno and NodeMCU. It tracks critical parameters such as salinity, pH, temperature, and turbidity, while providing alerts, analytics, and role-based management. Designed for farm owners, technicians, and workers, the system ensures optimal pond conditions, species-specific guidance, and reliable operations even offline.",
-  features: [
-    "Real-time monitoring of water salinity, pH, temperature, and turbidity",
-    "Parameter trends and system status dashboard",
-    "Alert system with customizable min/max thresholds, notifications, and animations",
-    "Analytics with calendar-based views: last 24 hours, weekly, monthly, all data",
-    "User management: add users, assign roles (Owner, Technician, Worker), activate/deactivate accounts",
-    "Pond management: add ponds with species, dimensions, and species-specific categories",
-    "Species profiles with acceptable ranges for water parameters",
-    "Guidance system suggesting adjustments to improve water quality",
-    "Offline mode with data sync when Wi-Fi is unavailable",
-    "Automated water quality reports and summary statistics"
-  ],
-  link: "https://github.com/project-hydrofarm",
-  demoLink: "https://hydrofarm-demo.com",
-  stack: ["Flutter", "Dart", "Arduino", "ESP8266", "Arduino", "Firebase", "C++",],
-  category: "iot",
-  year: 2025,
-},
-
+  {
+    id: 4,
+    image: importImage("kizuna.png"),
+    title: "Kizuna Anime Tracker",
+    projectTitle: "Cross-Platform Mobile Application",
+    description:
+      "Kizuna is a cross-platform anime tracking mobile application that provides a personalized dashboard for managing anime across categories such as Watching, Plan to Watch, and Dropped. The app empowers users to build their own library, track progress, and explore upcoming anime with an interactive calendar. It also includes advanced statistics, social ranking, and discovery features, making anime tracking engaging and interactive.",
+    features: [
+      "Dashboard with categories: Watching, Plan to Watch, Dropped",
+      "Bookmark system for creating personal anime library",
+      "Browse anime with detailed info and related anime recommendations",
+      "Calendar for upcoming anime (Monday–Sunday)",
+      "Announcements for upcoming releases",
+      "Stats: rating distribution, episode watch heatmap (per month), favorite producers & genres",
+      "User ranking system with EXP based on watched episodes",
+      "Character list for each anime",
+      "Search anime functionality",
+      "Source manager: add favorite websites for faster access",
+      "Built-in ad blocker for a smoother experience"
+    ],
+    link: "https://github.com/project-kizuna",
+    demoLink: "https://kizuna-demo.com",
+    stack: ["Flutter", "Dart", "Supabase", "AniList API", "SQLite"],
+    category: "mobile",
+    year: 2025,
+  },
+  {
+    id: 5,
+    image: importImage("berserk.png"),
+    title: "Learning Stack Management Web Application",
+    projectTitle: "Learning Management System",
+    description:
+      "A modern web-based Learning Management System (LMS) designed with dashboard animations, mobile responsiveness, and real-time communication. It enables seamless interaction between teachers, students, and parents while supporting quizzes, exams, and role-based access for administrators.",
+    features: [
+      "Dashboard with smooth animations",
+      "Mobile responsive design",
+      "Real-time chat between parents and teachers",
+      "Quizzes and exams module",
+      "Role-based accounts: Teacher, Admin, Student",
+      "Performance tracking and reports",
+      "Secure authentication system"
+    ],
+    link: "https://github.com/project-five",
+    demoLink: "https://lms-app-demo.com",
+    stack: ["React", "Node.js", "Express", "Socket.IO", "MongoDB", "TailwindCSS"],
+    category: "web",
+    year: 2025,
+  },
+  {
+    id: 6,
+    image: importImage("hydrofarm.png"),
+    title: "Hydro Farm Monitoring System",
+    projectTitle: "Cross-Platform IoT Web & Mobile Application",
+    description:
+      "Hydro Farm is an IoT-powered mobile and web application that monitors aquaculture water quality in real time using Arduino Uno and NodeMCU. It tracks critical parameters such as salinity, pH, temperature, and turbidity, while providing alerts, analytics, and role-based management. Designed for farm owners, technicians, and workers, the system ensures optimal pond conditions, species-specific guidance, and reliable operations even offline.",
+    features: [
+      "Real-time monitoring of water salinity, pH, temperature, and turbidity",
+      "Parameter trends and system status dashboard",
+      "Alert system with customizable min/max thresholds, notifications, and animations",
+      "Analytics with calendar-based views: last 24 hours, weekly, monthly, all data",
+      "User management: add users, assign roles (Owner, Technician, Worker), activate/deactivate accounts",
+      "Pond management: add ponds with species, dimensions, and species-specific categories",
+      "Species profiles with acceptable ranges for water parameters",
+      "Guidance system suggesting adjustments to improve water quality",
+      "Offline mode with data sync when Wi-Fi is unavailable",
+      "Automated water quality reports and summary statistics"
+    ],
+    link: "https://github.com/project-hydrofarm",
+    demoLink: "https://hydrofarm-demo.com",
+    stack: ["Flutter", "Dart", "Arduino", "ESP8266", "Arduino", "Firebase", "C++",],
+    category: "iot",
+    year: 2025,
+  },
 ];
 
 const Projects = () => {
@@ -259,24 +253,28 @@ const Projects = () => {
   };
 
   return (
-    <section
-      id="projects"
-      className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 py-12 sm:py-20 px-4 sm:px-6"
-    >
-      <div className="max-w-7xl mx-auto">
+    <section id="projects" className="bg-gradient-to-b from-[#111827] to-[#0f172a] py-20 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500 rounded-full filter blur-3xl"></div>
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">
+          <h2 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 font-oswald mb-6">
             My Projects
           </h2>
-          <p className="mt-4 text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Explore my portfolio of projects across different technologies and
-            platforms
+          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mb-6"></div>
+          <p className="text-xl text-gray-300 font-light max-w-2xl mx-auto leading-relaxed">
+            Explore my portfolio of projects across different technologies and platforms
           </p>
         </motion.div>
 
@@ -289,10 +287,14 @@ const Projects = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
-                className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col lg:flex-row group border border-gray-200 dark:border-gray-700"
+                className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-lg border border-gray-700/50 rounded-3xl shadow-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col lg:flex-row group relative"
                 onMouseEnter={() => setHoveredProject(project.id)}
                 onMouseLeave={() => setHoveredProject(null)}
               >
+                {/* Project decorative elements */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5 rounded-3xl"></div>
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 rounded-t-3xl"></div>
+                
                 <div className="lg:w-1/2 xl:w-3/5 relative overflow-hidden">
                   <div className="relative h-64 lg:h-full">
                     <img
@@ -302,7 +304,7 @@ const Projects = () => {
                           : (project.image || getFallbackImage(project))
                       }
                       alt={project.projectTitle}
-                      className={`w-full h-full object-contain bg-gray-100 dark:bg-gray-700 transition-transform duration-500 ${
+                      className={`w-full h-full object-contain bg-gray-800/60 transition-transform duration-500 ${
                         hoveredProject === project.id
                           ? "scale-105"
                           : "scale-100"
@@ -337,7 +339,7 @@ const Projects = () => {
                   </div>
                 </div>
 
-                <div className="p-6 lg:p-8 lg:w-1/2 xl:w-2/5 flex flex-col">
+                <div className="p-6 lg:p-8 lg:w-1/2 xl:w-2/5 flex flex-col relative z-10">
                   <div>
                     <div className="flex items-center gap-3 mb-3">
                       <span
@@ -347,32 +349,32 @@ const Projects = () => {
                       >
                         {project.category}
                       </span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                      <span className="text-sm text-gray-400">
                         {project.year}
                       </span>
                     </div>
 
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
                       {project.title}
                     </h3>
 
-                    <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
+                    <h4 className="text-lg font-semibold text-gray-300 mb-4">
                       {project.projectTitle}
                     </h4>
 
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    <p className="text-gray-400 mb-4">
                       {project.description}
                     </p>
 
                     <div className="mb-6">
-                      <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                      <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
                         Key Features
                       </h4>
                       <ul className="space-y-2">
                         {project.features.map((feature, index) => (
                           <li key={index} className="flex items-start">
                             <svg
-                              className="w-4 h-4 text-blue-500 mt-0.5 mr-2 flex-shrink-0"
+                              className="w-4 h-4 text-blue-400 mt-0.5 mr-2 flex-shrink-0"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -384,7 +386,7 @@ const Projects = () => {
                                 d="M5 13l4 4L19 7"
                               ></path>
                             </svg>
-                            <span className="text-gray-600 dark:text-gray-300">
+                            <span className="text-gray-300">
                               {feature}
                             </span>
                           </li>
@@ -395,7 +397,7 @@ const Projects = () => {
 
                   <div className="mt-auto">
                     <div className="mb-6">
-                      <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+                      <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
                         Tech Stack
                       </h4>
                       <div className="flex flex-wrap gap-2">
@@ -404,7 +406,7 @@ const Projects = () => {
                             key={tech}
                             className={`px-3 py-1 rounded-full text-xs font-medium ${
                               techColors[tech] ||
-                              "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                              "bg-gray-700 text-gray-200"
                             }`}
                           >
                             {tech}
@@ -413,7 +415,7 @@ const Projects = () => {
                       </div>
                     </div>
 
-                    <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <div className="flex justify-between items-center border-t border-gray-700 pt-4">
                       <div className="flex gap-2">
                         <a
                           href={project.link}
@@ -429,7 +431,7 @@ const Projects = () => {
                             href={project.demoLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 border border-gray-600 text-gray-200 hover:bg-gray-600 rounded-lg transition-colors"
                           >
                             <FiExternalLink />
                             <span>Live Demo</span>
