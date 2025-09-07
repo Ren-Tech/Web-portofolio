@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import pogiImage from "../assets/pogi.png";
+import { motion } from "framer-motion";
 
-// Custom SVG icons as replacements for react-icons
+// Icons remain the same as before
 const EmailIcon = ({ size = 48, className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -42,32 +44,149 @@ const LinkedinIcon = ({ size = 48, className }) => (
   </svg>
 );
 
+const SpotifyIcon = ({ size = 48, className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+  </svg>
+);
+
 const Home = () => {
   const [visible, setVisible] = useState(false);
+  const [nowPlaying, setNowPlaying] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [typingText, setTypingText] = useState("");
+  const [typingIndex, setTypingIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const texts = [
+    "A passionate Mobile and Web Developer",
+    "A passionate Mobile Application Developer",
+    "A passionate Web Application Developer",
+  ];
+  const typingSpeed = 100;
+  const deletingSpeed = 50;
+  const pauseBetween = 2000;
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(true);
     }, 100);
 
-    return () => clearTimeout(timer);
-  }, []);
+    // Typing effect
+    const typingTimer = setTimeout(
+      () => {
+        const currentText = texts[typingIndex % texts.length];
+
+        if (isDeleting) {
+          setTypingText(currentText.substring(0, typingText.length - 1));
+          if (typingText === "") {
+            setIsDeleting(false);
+            setTypingIndex((prevIndex) => prevIndex + 1);
+          }
+        } else {
+          setTypingText(currentText.substring(0, typingText.length + 1));
+          if (typingText === currentText) {
+            setTimeout(() => setIsDeleting(true), pauseBetween);
+          }
+        }
+      },
+      isDeleting ? deletingSpeed : typingSpeed
+    );
+
+    // Fetch Spotify now playing data
+    const fetchNowPlaying = async () => {
+      try {
+        const response = await fetch("/api/spotify");
+        const data = await response.json();
+
+        if (data.isPlaying) {
+          setNowPlaying(data);
+        } else {
+          setNowPlaying(null);
+        }
+      } catch (err) {
+        setError("Couldn't fetch Spotify data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNowPlaying();
+    const interval = setInterval(fetchNowPlaying, 30000);
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(typingTimer);
+      clearInterval(interval);
+    };
+  }, [typingText, typingIndex, isDeleting]);
 
   return (
-    <section className="min-h-screen bg-[#111827] flex flex-col md:flex-row justify-center items-center px-4 md:px-16 relative">
-      {/* Sticky Spotify Song Info - Hidden on mobile */}
-      <div className="hidden md:block absolute top-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-md"></div>
+    <section className="min-h-screen bg-[#111827] flex flex-col md:flex-row justify-center items-center px-4 md:px-16 relative overflow-hidden">
+      {/* Spotify Now Playing Widget */}
+      <motion.div
+        className="hidden md:block absolute top-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-md max-w-xs"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
+        {loading ? (
+          <div className="flex items-center space-x-2">
+            <SpotifyIcon size={24} className="text-green-500" />
+            <span>Loading...</span>
+          </div>
+        ) : error ? (
+          <div className="text-red-400">{error}</div>
+        ) : nowPlaying ? (
+          <a
+            href={nowPlaying.songUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          >
+            <img
+              src={nowPlaying.albumImageUrl}
+              alt={nowPlaying.album}
+              className="w-12 h-12 rounded"
+            />
+            <div className="flex-1 min-w-0">
+              <div className="font-medium truncate">{nowPlaying.title}</div>
+              <div className="text-sm text-gray-400 truncate">
+                {nowPlaying.artist}
+              </div>
+              <div className="flex items-center mt-1">
+                <SpotifyIcon size={16} className="text-green-500 mr-1" />
+                <span className="text-xs text-gray-400">Now Playing</span>
+              </div>
+            </div>
+          </a>
+        ) : (
+          <div className="flex items-center space-x-2">
+            <SpotifyIcon size={24} className="text-green-500" />
+            <span>Not Playing</span>
+          </div>
+        )}
+      </motion.div>
 
-      {/* Content Container - Stacked vertically on mobile */}
-      <div className="w-full flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0">
-        {/* Image - Show first on mobile, right side on desktop */}
+      {/* Content Container */}
+      <div className="w-full flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 z-10">
+        {/* Image */}
         <div
           className={`order-first md:order-none w-full md:w-1/2 flex justify-center transition-opacity duration-700 ${
             visible ? "opacity-100" : "opacity-0"
           }`}
         >
           <img
-            src="/pogi.png"
+            src={pogiImage}
             alt="Clarence"
             className="rounded-lg shadow-lg w-full max-w-xs md:max-w-md md:w-3/4 h-auto object-cover hover:shadow-xl transition-shadow duration-300 mb-8 md:mb-0"
           />
@@ -75,7 +194,7 @@ const Home = () => {
 
         {/* Left Side - Icons and Text */}
         <div className="flex flex-col md:flex-row items-center w-full md:w-1/2">
-          {/* Icons - Horizontal on mobile, vertical on desktop */}
+          {/* Icons */}
           <div
             className={`flex md:flex-col space-x-6 md:space-x-0 md:space-y-6 md:mr-6 mb-4 md:mb-0 transition-opacity duration-700 ${
               visible ? "opacity-100" : "opacity-0"
@@ -105,7 +224,7 @@ const Home = () => {
             </a>
           </div>
 
-          {/* Line Divider - Hidden on mobile */}
+          {/* Line Divider */}
           <div
             className={`hidden md:block w-1 h-48 bg-gray-600 opacity-50 mr-6 transition-opacity duration-700 ${
               visible ? "opacity-100" : "opacity-0"
@@ -121,10 +240,9 @@ const Home = () => {
             <h1 className="text-3xl md:text-6xl font-bold text-white mb-4">
               Hi, I'm Clarence
             </h1>
-            <p className="text-xl md:text-2xl mb-6 text-gray-300">
-              <span className="text-amber-500 font-semibold">
-                A passionate Mobile and Web Application Developer
-              </span>
+            <p className="text-xl md:text-2xl mb-6 text-amber-500 font-semibold h-8">
+              {typingText}
+              <span className="animate-pulse">|</span>
             </p>
             <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 justify-center md:justify-start">
               <a
