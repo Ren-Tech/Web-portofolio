@@ -35,7 +35,7 @@ const allProjects = [
     ],
     link: "https://github.com/Ren-Tech/my-portfolio",
     demoLink: "https://yourportfolio.com",
-    stack: ["React", "Next.js", "Tailwind CSS", "Framer Motion", "Vercel"],
+    stack: ["React", "Node.js", "Tailwind CSS", "Framer Motion", "Vercel"],
     category: "web",
     year: 2023,
   },
