@@ -34,7 +34,7 @@ const allProjects = [
     link: "https://github.com/Ren-Tech/my-portfolio",
     demoLink: "https://yourportfolio.com",
     stack: ["React", "Node.js", "Tailwind CSS", "Framer Motion", "Vercel"],
-    category: "web",
+    category: "Web",
     year: 2023,
   },
   {
@@ -54,7 +54,7 @@ const allProjects = [
     link: "https://github.com/Ren-Tech/IoT-Based-Water-Quality-Monitoring-System-Web-based",
     demoLink: "https://psmwaterquality.firebaseapp.com/",
     stack: ["Flutter", "Dart", "Firebase", "Node.js", "C++", "Arduino", "ESP8266"],
-    category: "iot",
+    category: "IoT",
     year: 2023,
   },
   {
@@ -86,7 +86,7 @@ const allProjects = [
       "Cython",
       "XSLT",
     ],
-    category: "web",
+    category: "Web",
     year: 2025,
   },
   {
@@ -112,7 +112,7 @@ const allProjects = [
     link: "https://github.com/project-kizuna",
     demoLink: "https://kizuna-demo.com",
     stack: ["Flutter", "Dart", "Supabase", "AniList API", "SQLite"],
-    category: "mobile",
+    category: "Mobile",
     year: 2025,
   },
   {
@@ -134,7 +134,7 @@ const allProjects = [
     link: "https://github.com/project-five",
     demoLink: "https://lms-app-demo.com",
     stack: ["React", "Node.js", "Express", "Socket.IO", "MongoDB", "TailwindCSS"],
-    category: "web",
+    category: "Web",
     year: 2025,
   },
   {
@@ -159,7 +159,7 @@ const allProjects = [
     link: "https://github.com/project-hydrofarm",
     demoLink: "https://hydrofarm-demo.com",
     stack: ["Flutter", "Dart", "Arduino", "ESP8266", "Arduino", "Firebase", "C++",],
-    category: "iot",
+    category: "IoT",
     year: 2025,
   },
 ];
@@ -181,10 +181,10 @@ const Projects = () => {
   // Get fallback image for failed loads
   const getFallbackImage = (project) => {
     const colors = {
-      iot: "3b82f6",
-      web: "6366f1", 
-      mobile: "10b981",
-      desktop: "f59e0b"
+      IoT: "3b82f6",
+      Web: "6366f1", 
+      Mobile: "10b981",
+      Desktop: "f59e0b"
     };
     const color = colors[project.category] || "6b7280";
     return `https://via.placeholder.com/600x400/${color}/ffffff?text=${encodeURIComponent(project.title)}`;
@@ -246,10 +246,10 @@ const Projects = () => {
   };
 
   const categoryColors = {
-    iot: "bg-blue-500",
-    web: "bg-purple-500",
-    mobile: "bg-green-500",
-    desktop: "bg-orange-500",
+    IoT: "bg-blue-500",
+    Web: "bg-purple-500",
+    Mobile: "bg-green-500",
+    Desktop: "bg-orange-500",
   };
 
   return (
