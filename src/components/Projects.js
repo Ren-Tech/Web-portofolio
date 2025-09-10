@@ -169,6 +169,7 @@ const Projects = () => {
   const [showAll, setShowAll] = useState(false);
   const [hoveredProject, setHoveredProject] = useState(null);
   const [imageErrors, setImageErrors] = useState({});
+  const [expandedFeatures, setExpandedFeatures] = useState({});
 
   // Handle image loading errors
   const handleImageError = (projectId) => {
@@ -197,6 +198,19 @@ const Projects = () => {
       setVisibleProjects(allProjects.length);
     }
     setShowAll(!showAll);
+  };
+
+  const toggleFeatures = (projectId) => {
+    setExpandedFeatures(prev => ({
+      ...prev,
+      [projectId]: !prev[projectId]
+    }));
+  };
+
+  const getVisibleFeatures = (features, projectId) => {
+    const isExpanded = expandedFeatures[projectId];
+    if (features.length <= 5) return features;
+    return isExpanded ? features : features.slice(0, 5);
   };
 
   const projectsToShow = allProjects.slice(0, visibleProjects);
@@ -367,31 +381,61 @@ const Projects = () => {
                     </p>
 
                     <div className="mb-6">
-                      <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                        Key Features
-                      </h4>
-                      <ul className="space-y-2">
-                        {project.features.map((feature, index) => (
-                          <li key={index} className="flex items-start">
-                            <svg
-                              className="w-4 h-4 text-blue-400 mt-0.5 mr-2 flex-shrink-0"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                          Key Features
+                        </h4>
+                       
+                      </div>
+                      <AnimatePresence>
+                        <ul className="space-y-2">
+                          {getVisibleFeatures(project.features, project.id).map((feature, index) => (
+                            <motion.li 
+                              key={index}
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="flex items-start"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M5 13l4 4L19 7"
-                              ></path>
-                            </svg>
-                            <span className="text-gray-300">
-                              {feature}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
+                              <svg
+                                className="w-4 h-4 text-blue-400 mt-0.5 mr-2 flex-shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M5 13l4 4L19 7"
+                                ></path>
+                              </svg>
+                              <span className="text-gray-300">
+                                {feature}
+                              </span>
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </AnimatePresence>
+                      {project.features.length > 5 && (
+                        <button
+                          onClick={() => toggleFeatures(project.id)}
+                          className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1 transition-colors mt-3"
+                        >
+                          {expandedFeatures[project.id] ? (
+                            <>
+                              <FiChevronUp className="w-3 h-3" />
+                              Show Less
+                            </>
+                          ) : (
+                            <>
+                              <FiChevronDown className="w-3 h-3" />
+                              Show More ({project.features.length - 5})
+                            </>
+                          )}
+                        </button>
+                      )}
                     </div>
                   </div>
 
