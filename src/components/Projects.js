@@ -5,6 +5,10 @@ import {
   FiExternalLink,
   FiChevronDown,
   FiChevronUp,
+  FiCode,
+  FiSmartphone,
+  FiGlobe,
+  FiCpu,
 } from "react-icons/fi";
 
 // Import images from assets folder
@@ -158,7 +162,7 @@ const allProjects = [
     ],
     link: "https://github.com/project-hydrofarm",
     demoLink: "https://hydrofarm-demo.com",
-    stack: ["Flutter", "Dart", "Arduino", "ESP8266", "Arduino", "Firebase", "C++",],
+    stack: ["Flutter", "Dart", "Arduino", "ESP8266", "Arduino", "Firebase", "C++"],
     category: "IoT",
     year: 2025,
   },
@@ -167,7 +171,7 @@ const allProjects = [
 const Projects = () => {
   const [visibleProjects, setVisibleProjects] = useState(3);
   const [showAll, setShowAll] = useState(false);
-  const [hoveredProject, setHoveredProject] = useState(null);
+  const [activeFilter, setActiveFilter] = useState("All");
   const [imageErrors, setImageErrors] = useState({});
   const [expandedFeatures, setExpandedFeatures] = useState({});
 
@@ -188,7 +192,7 @@ const Projects = () => {
       Desktop: "f59e0b"
     };
     const color = colors[project.category] || "6b7280";
-    return `https://via.placeholder.com/600x400/${color}/ffffff?text=${encodeURIComponent(project.title)}`;
+    return `https://via.placeholder.com/800x400/${color}/ffffff?text=${encodeURIComponent(project.title)}`;
   };
 
   const toggleProjects = () => {
@@ -199,6 +203,13 @@ const Projects = () => {
     }
     setShowAll(!showAll);
   };
+
+  // Filter projects by category
+  const filteredProjects = activeFilter === "All" 
+    ? allProjects 
+    : allProjects.filter(project => project.category === activeFilter);
+
+  const projectsToShow = filteredProjects.slice(0, visibleProjects);
 
   const toggleFeatures = (projectId) => {
     setExpandedFeatures(prev => ({
@@ -213,58 +224,44 @@ const Projects = () => {
     return isExpanded ? features : features.slice(0, 5);
   };
 
-  const projectsToShow = allProjects.slice(0, visibleProjects);
-
   const techColors = {
-    Flutter:
-      "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
-    Dart: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    Firebase:
-      "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
-    "Node.js":
-      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-    "C++": "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    Arduino: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-    React: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200",
-    MongoDB:
-      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-    Stripe:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
-    "Tailwind CSS":
-      "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200",
-    "React Native":
-      "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    Redux:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
-    "Chart.js":
-      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    "Vue.js":
-      "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200",
-    WebSockets:
-      "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
-    Electron: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-    TypeScript: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    "Weather API": "bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200",
-    Python: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    Flask: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-    Pandas: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    Plotly: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
-    Scrapy: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-    BeautifulSoup: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
-    HTML: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-    Cython: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    XSLT: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
-    "Next.js": "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-    "Framer Motion": "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200",
-    Vercel: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+    React: "bg-blue-600 text-white",
+    "Node.js": "bg-green-600 text-white",
+    "Tailwind CSS": "bg-cyan-600 text-white",
+    "Framer Motion": "bg-pink-600 text-white",
+    Vercel: "bg-black text-white",
+    Flutter: "bg-blue-500 text-white",
+    Dart: "bg-blue-700 text-white",
+    Firebase: "bg-orange-600 text-white",
+    "C++": "bg-purple-600 text-white",
+    Arduino: "bg-teal-600 text-white",
+    ESP8266: "bg-red-600 text-white",
+    Python: "bg-yellow-600 text-white",
+    Scrapy: "bg-green-700 text-white",
+    Flask: "bg-gray-700 text-white",
+    BeautifulSoup: "bg-blue-800 text-white",
+    Pandas: "bg-indigo-600 text-white",
+    Plotly: "bg-blue-600 text-white",
+    HTML: "bg-orange-500 text-white",
+    Cython: "bg-yellow-500 text-white",
+    XSLT: "bg-purple-500 text-white",
+    Supabase: "bg-green-600 text-white",
+    "AniList API": "bg-blue-500 text-white",
+    SQLite: "bg-gray-600 text-white",
+    Express: "bg-gray-800 text-white",
+    "Socket.IO": "bg-black text-white",
+    MongoDB: "bg-green-700 text-white",
+    TailwindCSS: "bg-cyan-600 text-white"
   };
 
-  const categoryColors = {
-    IoT: "bg-blue-500",
-    Web: "bg-purple-500",
-    Mobile: "bg-green-500",
-    Desktop: "bg-orange-500",
+  const categoryIcons = {
+    IoT: FiCpu,
+    Web: FiGlobe,
+    Mobile: FiSmartphone,
+    Desktop: FiCode,
   };
+
+  const filters = ["All", "Web", "Mobile", "IoT"];
 
   return (
     <section id="projects" className="bg-gradient-to-b from-[#111827] to-[#0f172a] py-20 relative overflow-hidden">
@@ -276,221 +273,232 @@ const Projects = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
+        {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
-          <h2 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 font-oswald mb-6">
-            My Projects
+          <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 font-oswald mb-4">
+            Featured Projects
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mb-6"></div>
-          <p className="text-xl text-gray-300 font-light max-w-2xl mx-auto leading-relaxed">
-            Explore my portfolio of projects across different technologies and platforms
+          <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mb-6"></div>
+          <p className="text-lg text-gray-300 font-light max-w-2xl mx-auto">
+            Explore my portfolio of innovative projects across different technologies
           </p>
         </motion.div>
 
-        <div className="grid gap-8 md:gap-10">
-          <AnimatePresence>
-            {projectsToShow.map((project) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-                className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-lg border border-gray-700/50 rounded-3xl shadow-2xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col lg:flex-row group relative"
-                onMouseEnter={() => setHoveredProject(project.id)}
-                onMouseLeave={() => setHoveredProject(null)}
+        {/* Filter Buttons */}
+        <motion.div 
+          className="flex flex-wrap justify-center gap-3 mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          {filters.map((filter) => {
+            const IconComponent = categoryIcons[filter] || FiCode;
+            return (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  activeFilter === filter
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
+                    : "bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-700"
+                }`}
               >
-                {/* Project decorative elements */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5 rounded-3xl"></div>
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 rounded-t-3xl"></div>
-                
-                <div className="lg:w-1/2 xl:w-3/5 relative overflow-hidden">
-                  <div className="relative h-64 lg:h-full">
-                    <img
-                      src={
-                        imageErrors[project.id] 
-                          ? getFallbackImage(project) 
-                          : (project.image || getFallbackImage(project))
-                      }
-                      alt={project.projectTitle}
-                      className={`w-full h-full object-contain bg-gray-800/60 transition-transform duration-500 ${
-                        hoveredProject === project.id
-                          ? "scale-105"
-                          : "scale-100"
-                      }`}
-                      onError={() => handleImageError(project.id)}
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                      <div className="flex gap-3">
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center w-10 h-10 bg-white/90 text-gray-800 rounded-full hover:bg-white transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <FiGithub className="w-5 h-5" />
-                        </a>
-                        {project.demoLink && (
-                          <a
-                            href={project.demoLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center w-10 h-10 bg-white/90 text-gray-800 rounded-full hover:bg-white transition-colors"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <FiExternalLink className="w-5 h-5" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <IconComponent className="w-4 h-4" />
+                {filter}
+              </button>
+            );
+          })}
+        </motion.div>
 
-                <div className="p-6 lg:p-8 lg:w-1/2 xl:w-2/5 flex flex-col relative z-10">
-                  <div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          categoryColors[project.category]
-                        } text-white`}
-                      >
-                        {project.category}
-                      </span>
-                      <span className="text-sm text-gray-400">
-                        {project.year}
-                      </span>
-                    </div>
+        {/* Projects List */}
+        <div className="max-w-7xl mx-auto space-y-10">
+          <AnimatePresence>
+            {projectsToShow.map((project, index) => {
+              const CategoryIcon = categoryIcons[project.category] || FiCode;
+              const visibleFeatures = getVisibleFeatures(project.features, project.id);
+              
+              return (
+                <motion.div
+                  key={project.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="group"
+                >
+                  <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-lg border border-gray-700/50 rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300">
+                    
+                    <div className="flex flex-col lg:flex-row">
+                      {/* IMAGE CONTAINER - Separate container for project image */}
+                      <div className="lg:w-3/5 relative">
+                        <div className="aspect-video lg:aspect-auto lg:h-full overflow-hidden">
+                          <img
+                            src={
+                              imageErrors[project.id] 
+                                ? getFallbackImage(project) 
+                                : (project.image || getFallbackImage(project))
+                            }
+                            alt={project.projectTitle}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            onError={() => handleImageError(project.id)}
+                            loading="lazy"
+                          />
+                          
+                          {/* Image Overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-gray-900/20"></div>
+                          
+                          {/* Project Badges */}
+                          <div className="absolute top-4 left-4 flex items-center gap-2">
+                            <div className="bg-black/70 backdrop-blur-sm rounded-full p-2">
+                              <CategoryIcon className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full font-medium">
+                              {project.category}
+                            </span>
+                            <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full font-medium">
+                              {project.year}
+                            </span>
+                          </div>
 
-                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
-                      {project.title}
-                    </h3>
-
-                    <h4 className="text-lg font-semibold text-gray-300 mb-4">
-                      {project.projectTitle}
-                    </h4>
-
-                    <p className="text-gray-400 mb-4">
-                      {project.description}
-                    </p>
-
-                    <div className="mb-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                          Key Features
-                        </h4>
-                       
-                      </div>
-                      <AnimatePresence>
-                        <ul className="space-y-2">
-                          {getVisibleFeatures(project.features, project.id).map((feature, index) => (
-                            <motion.li 
-                              key={index}
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              transition={{ duration: 0.2 }}
-                              className="flex items-start"
+                          {/* Quick Action Buttons */}
+                          <div className="absolute bottom-4 right-4 flex gap-2">
+                            <a
+                              href={project.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2.5 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
+                              title="View Source Code"
                             >
-                              <svg
-                                className="w-4 h-4 text-blue-400 mt-0.5 mr-2 flex-shrink-0"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                              <FiGithub className="w-4 h-4" />
+                            </a>
+                            {project.demoLink && (
+                              <a
+                                href={project.demoLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2.5 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
+                                title="View Live Demo"
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M5 13l4 4L19 7"
-                                ></path>
-                              </svg>
-                              <span className="text-gray-300">
-                                {feature}
-                              </span>
-                            </motion.li>
-                          ))}
-                        </ul>
-                      </AnimatePresence>
-                      {project.features.length > 5 && (
-                        <button
-                          onClick={() => toggleFeatures(project.id)}
-                          className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1 transition-colors mt-3"
-                        >
-                          {expandedFeatures[project.id] ? (
-                            <>
-                              <FiChevronUp className="w-3 h-3" />
-                              Show Less
-                            </>
-                          ) : (
-                            <>
-                              <FiChevronDown className="w-3 h-3" />
-                              Show More ({project.features.length - 5})
-                            </>
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                                <FiExternalLink className="w-4 h-4" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
 
-                  <div className="mt-auto">
-                    <div className="mb-6">
-                      <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                        Tech Stack
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {project.stack.map((tech) => (
-                          <span
-                            key={tech}
-                            className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              techColors[tech] ||
-                              "bg-gray-700 text-gray-200"
-                            }`}
-                          >
-                            {tech}
-                          </span>
-                        ))}
+                      {/* TEXT CONTAINER - Separate container for project content */}
+                      <div className="lg:w-2/5 bg-gray-900/50 backdrop-blur-sm">
+                        <div className="p-8 h-full flex flex-col">
+                          {/* Project Header */}
+                          <div className="mb-6">
+                            <h3 className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300 mb-2">
+                              {project.title}
+                            </h3>
+                            <h4 className="text-lg text-blue-300 mb-4 font-medium opacity-90">
+                              {project.projectTitle}
+                            </h4>
+                            <p className="text-gray-300 leading-relaxed text-sm">
+                              {project.description}
+                            </p>
+                          </div>
+
+                          {/* Key Features */}
+                          <div className="mb-6 flex-grow">
+                            <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                              Key Features
+                            </h4>
+                            <ul className="space-y-2.5 mb-4">
+                              {visibleFeatures.map((feature, idx) => (
+                                <li key={idx} className="flex items-start">
+                                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                  <span className="text-gray-300 text-sm leading-relaxed">
+                                    {feature}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                            
+                            {/* Show More/Less Features */}
+                            {project.features.length > 5 && (
+                              <button
+                                onClick={() => toggleFeatures(project.id)}
+                                className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1 transition-colors font-medium"
+                              >
+                                {expandedFeatures[project.id] ? (
+                                  <>
+                                    <FiChevronUp className="w-4 h-4" />
+                                    Show Less
+                                  </>
+                                ) : (
+                                  <>
+                                    <FiChevronDown className="w-4 h-4" />
+                                    Show More ({project.features.length - 5})
+                                  </>
+                                )}
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Tech Stack */}
+                          <div className="mb-6">
+                            <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                              Tech Stack
+                            </h4>
+                            <div className="flex flex-wrap gap-2">
+                              {project.stack.map((tech) => (
+                                <span
+                                  key={tech}
+                                  className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+                                    techColors[tech] || "bg-gray-700 text-gray-200"
+                                  } shadow-sm`}
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-3 mt-auto">
+                            <a
+                              href={project.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-300 flex-1 text-center font-medium text-sm hover:shadow-lg hover:shadow-blue-500/25"
+                            >
+                              <FiGithub className="w-4 h-4" />
+                              View Code
+                            </a>
+                            {project.demoLink && (
+                              <a
+                                href={project.demoLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-700 border border-gray-600 text-gray-200 hover:bg-gray-600 hover:border-gray-500 rounded-lg transition-all duration-300 flex-1 text-center font-medium text-sm"
+                              >
+                                <FiExternalLink className="w-4 h-4" />
+                                Live Demo
+                              </a>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="flex justify-between items-center border-t border-gray-700 pt-4">
-                      <div className="flex gap-2">
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300"
-                        >
-                          <FiGithub />
-                          <span>View Code</span>
-                        </a>
-                        {project.demoLink && (
-                          <a
-                            href={project.demoLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 border border-gray-600 text-gray-200 hover:bg-gray-600 rounded-lg transition-colors"
-                          >
-                            <FiExternalLink />
-                            <span>Live Demo</span>
-                          </a>
-                        )}
-                      </div>
-                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </div>
 
-        {allProjects.length > 3 && (
+        {/* Load More Button */}
+        {filteredProjects.length > 3 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -499,22 +507,41 @@ const Projects = () => {
           >
             <button
               onClick={toggleProjects}
-              className="relative inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 overflow-hidden group"
+              className="relative inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-300 overflow-hidden group"
             >
-              <span className="relative z-10 flex items-center gap-2">
+              <span className="relative z-10 flex items-center gap-2 font-medium">
                 {showAll ? (
                   <>
                     <FiChevronUp className="w-5 h-5" />
-                    <span>Show Less Projects</span>
+                    Show Less Projects
                   </>
                 ) : (
                   <>
                     <FiChevronDown className="w-5 h-5" />
-                    <span>Show More Projects</span>
+                    Load More Projects ({filteredProjects.length - 3})
                   </>
                 )}
               </span>
               <span className="absolute inset-0 bg-gradient-to-r from-blue-700 to-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+            </button>
+          </motion.div>
+        )}
+
+        {/* No Projects Message */}
+        {filteredProjects.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12"
+          >
+            <div className="text-gray-400 text-lg">
+              No projects found in the {activeFilter} category.
+            </div>
+            <button
+              onClick={() => setActiveFilter("All")}
+              className="mt-4 text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              View all projects
             </button>
           </motion.div>
         )}
