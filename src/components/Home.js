@@ -44,7 +44,6 @@ const LinkedinIcon = ({ size = 48, className }) => (
   </svg>
 );
 
-
 const LocationIcon = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor">
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -69,15 +68,12 @@ const Home = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [showExtraInfo, setShowExtraInfo] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   const texts = [
     "A passionate Full-Stack Developer",
-    "A passionate Mobile Application Developer", 
-    "A passionate Web Application Developer",
-    "Building amazing digital experiences",
     "Crafting code with love and coffee ☕",
   ];
-
 
   const stats = [
     { label: "Years of Experience", value: "3+" },
@@ -91,16 +87,26 @@ const Home = () => {
   const pauseBetween = 2000;
 
   useEffect(() => {
+    // Check if mobile on component mount and on resize
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     // Set everything to visible immediately on first load
     setVisible(true);
     setShowExtraInfo(true);
 
-    // Mouse tracking for parallax effect
+    // Mouse tracking for parallax effect - only on desktop
     const handleMouseMove = (e) => {
-      setMousePosition({
-        x: (e.clientX - window.innerWidth / 2) / 50,
-        y: (e.clientY - window.innerHeight / 2) / 50,
-      });
+      if (!isMobile) {
+        setMousePosition({
+          x: (e.clientX - window.innerWidth / 2) / 50,
+          y: (e.clientY - window.innerHeight / 2) / 50,
+        });
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -125,42 +131,55 @@ const Home = () => {
     return () => {
       clearTimeout(typingTimer);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', checkMobile);
     };
-  }, [typingText, typingIndex, isDeleting]);
+  }, [typingText, typingIndex, isDeleting, isMobile]);
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-[#111827] via-[#1e293b] to-[#0f172a] flex flex-col md:flex-row justify-center items-center px-4 md:px-16 relative overflow-hidden">
-      {/* Enhanced Background decorative elements with parallax */}
+    <section className="min-h-screen bg-gradient-to-br from-[#111827] via-[#1e293b] to-[#0f172a] flex flex-col lg:flex-row justify-center items-center px-4 sm:px-6 lg:px-16 relative overflow-hidden">
+      {/* Enhanced Background decorative elements - static on mobile */}
       <div className="absolute inset-0 opacity-10">
-        <motion.div 
-          className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full filter blur-3xl"
-          animate={{
-            x: mousePosition.x * 0.5,
-            y: mousePosition.y * 0.5,
-          }}
-          transition={{ type: "spring", stiffness: 50 }}
-        />
-        <motion.div 
-          className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500 rounded-full filter blur-3xl"
-          animate={{
-            x: mousePosition.x * -0.3,
-            y: mousePosition.y * -0.3,
-          }}
-          transition={{ type: "spring", stiffness: 50 }}
-        />
-        <motion.div 
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500 rounded-full filter blur-3xl"
-          animate={{
-            x: mousePosition.x * 0.2,
-            y: mousePosition.y * 0.2,
-            scale: [1, 1.1, 1],
-          }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 50,
-            scale: { duration: 4, repeat: Infinity }
-          }}
-        />
+        {isMobile ? (
+          // Static background for mobile
+          <>
+            <div className="absolute top-20 left-4 sm:left-10 w-48 sm:w-72 h-48 sm:h-72 bg-blue-500 rounded-full filter blur-3xl" />
+            <div className="absolute bottom-20 right-4 sm:right-10 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500 rounded-full filter blur-3xl" />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 sm:w-64 h-48 sm:h-64 bg-cyan-500 rounded-full filter blur-3xl" />
+          </>
+        ) : (
+          // Animated background for desktop
+          <>
+            <motion.div 
+              className="absolute top-20 left-4 sm:left-10 w-48 sm:w-72 h-48 sm:h-72 bg-blue-500 rounded-full filter blur-3xl"
+              animate={{
+                x: mousePosition.x * 0.5,
+                y: mousePosition.y * 0.5,
+              }}
+              transition={{ type: "spring", stiffness: 50 }}
+            />
+            <motion.div 
+              className="absolute bottom-20 right-4 sm:right-10 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500 rounded-full filter blur-3xl"
+              animate={{
+                x: mousePosition.x * -0.3,
+                y: mousePosition.y * -0.3,
+              }}
+              transition={{ type: "spring", stiffness: 50 }}
+            />
+            <motion.div 
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 sm:w-64 h-48 sm:h-64 bg-cyan-500 rounded-full filter blur-3xl"
+              animate={{
+                x: mousePosition.x * 0.2,
+                y: mousePosition.y * 0.2,
+                scale: [1, 1.1, 1],
+              }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 50,
+                scale: { duration: 4, repeat: Infinity }
+              }}
+            />
+          </>
+        )}
       </div>
 
       {/* Floating Code Elements */}
@@ -189,18 +208,18 @@ const Home = () => {
         ))}
       </div>
 
-      {/* Status Bar */}
+      {/* Status Bar - Mobile Responsive */}
       <motion.div
-        className="absolute top-4 left-4 bg-gray-800/80 backdrop-blur-sm text-white p-3 rounded-lg shadow-lg z-10 border border-gray-700"
+        className="absolute top-4 left-2 right-2 sm:left-4 sm:right-auto bg-gray-800/80 backdrop-blur-sm text-white p-3 rounded-lg shadow-lg z-10 border border-gray-700 max-w-xs sm:max-w-none mx-auto sm:mx-0"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <div className="flex items-center space-x-2 text-sm">
+        <div className="flex items-center space-x-2 text-sm justify-center sm:justify-start">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
           <span>Available for work</span>
         </div>
-        <div className="flex items-center space-x-1 text-xs text-gray-400 mt-1">
+        <div className="flex items-center space-x-1 text-xs text-gray-400 mt-1 justify-center sm:justify-start">
           <LocationIcon />
           <span>Philippines</span>
           <CoffeeIcon />
@@ -209,8 +228,8 @@ const Home = () => {
       </motion.div>
 
       {/* Main Content Container */}
-      <div className="w-full flex flex-col lg:flex-row items-center justify-center space-y-8 lg:space-y-0 z-10">
-        {/* Profile Image with Enhanced Effects - Using the imported image */}
+      <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center justify-center space-y-8 lg:space-y-0 lg:space-x-12 z-10 pt-16 lg:pt-0">
+        {/* Profile Image with Enhanced Effects */}
         <motion.div
           className="order-first lg:order-none w-full lg:w-1/2 flex justify-center"
           initial={{ opacity: 0, scale: 0.8 }}
@@ -219,28 +238,25 @@ const Home = () => {
         >
           <motion.div
             className="relative group"
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: isMobile ? 1 : 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            {/* Using the imported image - Text removed */}
-            <div className="w-80 h-80 rounded-2xl shadow-2xl mb-8 lg:mb-0 relative overflow-hidden">
+            <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-2xl shadow-2xl mb-8 lg:mb-0 relative overflow-hidden">
               <img 
                 src={pogiImage} 
                 alt="Clarence" 
                 className="w-full h-full object-cover rounded-2xl"
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-              
-            
             </div>
           </motion.div>
         </motion.div>
 
-        {/* Left Side - Enhanced Content */}
+        {/* Right Side - Enhanced Content */}
         <div className="flex flex-col lg:flex-row items-center w-full lg:w-1/2">
           {/* Social Icons with Enhanced Animation */}
           <motion.div
-            className="flex lg:flex-col space-x-6 lg:space-x-0 lg:space-y-6 lg:mr-8 mb-6 lg:mb-0"
+            className="flex lg:flex-col space-x-6 lg:space-x-0 lg:space-y-6 lg:mr-8 mb-6 lg:mb-0 justify-center lg:justify-start"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: visible ? 1 : 0, x: visible ? 0 : -50 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -256,21 +272,21 @@ const Home = () => {
                 target={href.startsWith('http') ? "_blank" : undefined}
                 rel={href.startsWith('http') ? "noopener noreferrer" : undefined}
                 className="text-white hover:text-blue-400 transition-all duration-300 relative group"
-                whileHover={{ scale: 1.2, rotate: 10 }}
+                whileHover={{ scale: isMobile ? 1 : 1.2, rotate: isMobile ? 0 : 10 }}
                 whileTap={{ scale: 0.9 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + i * 0.1 }}
               >
-                <Icon size={32} className="lg:w-12 lg:h-12" />
-                <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 rounded">
+                <Icon size={32} className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12" />
+                <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 px-2 py-1 rounded whitespace-nowrap">
                   {label}
                 </span>
               </motion.a>
             ))}
           </motion.div>
 
-          {/* Animated Divider */}
+          {/* Animated Divider - Hidden on mobile */}
           <motion.div
             className="hidden lg:block w-1 h-48 bg-gradient-to-b from-blue-500 to-purple-500 opacity-50 mr-8 rounded-full"
             initial={{ height: 0, opacity: 0 }}
@@ -280,13 +296,13 @@ const Home = () => {
 
           {/* Enhanced Text Content */}
           <motion.div
-            className="text-center lg:text-left"
+            className="text-center lg:text-left w-full"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: visible ? 1 : 0, x: visible ? 0 : 50 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <motion.h1 
-              className="text-4xl lg:text-7xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
+              className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -295,13 +311,12 @@ const Home = () => {
             </motion.h1>
             
             <motion.div
-              className="text-xl lg:text-3xl mb-6 text-amber-400 font-semibold h-20 flex items-center justify-center lg:justify-start"
+              className="text-lg sm:text-xl lg:text-2xl xl:text-3xl mb-6 text-amber-400 font-semibold h-16 sm:h-20 flex items-center justify-center lg:justify-start"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-            
-              <span>
+              <span className="text-center lg:text-left">
                 {typingText}
                 <motion.span
                   className="text-blue-400"
@@ -313,9 +328,9 @@ const Home = () => {
               </span>
             </motion.div>
 
-            {/* Stats Counter - Always visible now */}
+            {/* Stats Counter - Responsive grid */}
             <motion.div
-              className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+              className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8 max-w-md mx-auto lg:mx-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
@@ -327,30 +342,28 @@ const Home = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.7 + i * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: isMobile ? 1 : 1.05 }}
                 >
-                  <div className="text-2xl font-bold text-blue-400">{stat.value}</div>
-                  <div className="text-xs text-gray-400">{stat.label}</div>
+                  <div className="text-xl sm:text-2xl font-bold text-blue-400">{stat.value}</div>
+                  <div className="text-xs text-gray-400 leading-tight mt-1">{stat.label}</div>
                 </motion.div>
               ))}
             </motion.div>
 
-            {/* Enhanced Action Buttons */}
+            {/* Enhanced Action Buttons - Stack on mobile */}
             <motion.div
-              className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 justify-center lg:justify-start"
+              className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 justify-center lg:justify-start"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
               <motion.a
                 href="#projects"
-                className="group relative inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-lg text-center overflow-hidden"
-                whileHover={{ scale: 1.05 }}
+                className="group relative inline-block px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-base sm:text-lg text-center overflow-hidden"
+                whileHover={{ scale: isMobile ? 1 : 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <span className="relative z-10 flex items-center justify-center">
-                 
-
                   See My Work
                 </span>
                 <motion.div
@@ -361,8 +374,8 @@ const Home = () => {
               
               <motion.a
                 href="#contact"
-                className="inline-block px-8 py-4 border-2 border-white text-white rounded-lg transition-all duration-300 hover:bg-white hover:text-blue-600 text-lg text-center relative group overflow-hidden"
-                whileHover={{ scale: 1.05 }}
+                className="inline-block px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white rounded-lg transition-all duration-300 hover:bg-white hover:text-blue-600 text-base sm:text-lg text-center relative group overflow-hidden"
+                whileHover={{ scale: isMobile ? 1 : 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <span className="relative z-10">Contact Me</span>
@@ -372,9 +385,9 @@ const Home = () => {
               </motion.a>
             </motion.div>
 
-            {/* Quick Contact Info - Always visible now */}
+            {/* Quick Contact Info */}
             <motion.div
-              className="mt-8 text-gray-400 text-sm"
+              className="mt-6 sm:mt-8 text-gray-400 text-sm text-center lg:text-left"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
@@ -386,25 +399,27 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.0 }}
-      >
+      {/* Scroll Indicator - Only show on desktop */}
+      {!isMobile && (
         <motion.div
-          className="w-6 h-10 border-2 border-white rounded-full flex justify-center"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
+          className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
         >
           <motion.div
-            className="w-1 h-3 bg-white rounded-full mt-2"
-            animate={{ opacity: [1, 0, 1] }}
+            className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-white rounded-full flex justify-center"
+            animate={{ y: [0, 8, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-          />
+          >
+            <motion.div
+              className="w-1 h-2 sm:h-3 bg-white rounded-full mt-2"
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            />
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </section>
   );
 };

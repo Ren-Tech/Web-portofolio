@@ -23,7 +23,7 @@ const importImage = (imageName) => {
 const allProjects = [
   {
     id: 1,
-    image: importImage("berserk.png"),
+    image: importImage("web-portfolio.png"),
     title: "This Web Portfolio",
     projectTitle: "My Personal Portfolio",
     description:
@@ -43,7 +43,7 @@ const allProjects = [
   },
   {
     id: 2,
-    image: importImage("berserk.png"),
+    image: importImage("smp.png"),
     title: "IoT Based - Water Quality Monitoring System",
     projectTitle: "Mobile and Web Application",
     description:
@@ -121,7 +121,7 @@ const allProjects = [
   },
   {
     id: 5,
-    image: importImage("berserk.png"),
+    image: importImage(""),
     title: "Learning Stack Management Web Application",
     projectTitle: "Learning Management System",
     description:
@@ -264,7 +264,7 @@ const Projects = () => {
   const filters = ["All", "Web", "Mobile", "IoT"];
 
   return (
-    <section id="projects" className="bg-gradient-to-b from-[#111827] to-[#0f172a] py-20 relative overflow-hidden">
+    <section id="projects" className="bg-gradient-to-b from-[#111827] to-[#0f172a] py-16 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full filter blur-3xl"></div>
@@ -279,7 +279,7 @@ const Projects = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-10"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 font-oswald mb-4">
             Featured Projects
@@ -292,7 +292,7 @@ const Projects = () => {
 
         {/* Filter Buttons */}
         <motion.div 
-          className="flex flex-wrap justify-center gap-3 mb-8"
+          className="flex flex-wrap justify-center gap-3 mb-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -317,11 +317,14 @@ const Projects = () => {
         </motion.div>
 
         {/* Projects List */}
-        <div className="max-w-7xl mx-auto space-y-10">
+        <div className="max-w-7xl mx-auto space-y-8">
           <AnimatePresence>
             {projectsToShow.map((project, index) => {
               const CategoryIcon = categoryIcons[project.category] || FiCode;
               const visibleFeatures = getVisibleFeatures(project.features, project.id);
+              const projectImage = imageErrors[project.id] 
+                ? getFallbackImage(project) 
+                : (project.image || getFallbackImage(project));
               
               return (
                 <motion.div
@@ -332,60 +335,69 @@ const Projects = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="group"
                 >
-                  <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-lg border border-gray-700/50 rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300">
+                  <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-lg border border-gray-700/50 rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300">
                     
-                    <div className="flex flex-col lg:flex-row">
-                      {/* IMAGE CONTAINER - Separate container for project image */}
-                      <div className="lg:w-3/5 relative">
-                        <div className="aspect-video lg:aspect-auto lg:h-full overflow-hidden">
+                    <div className="flex flex-col lg:flex-row min-h-[400px]">
+                      {/* IMAGE CONTAINER - with subtle blurred background */}
+                      <div className="lg:w-3/5 relative overflow-hidden rounded-l-xl">
+                        {/* Subtle Blurred Background Image */}
+                        <div 
+                          className="absolute inset-0 z-0"
+                          style={{
+                            backgroundImage: `url(${projectImage})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            filter: 'blur(8px) brightness(0.9)',
+                            transform: 'scale(1.02)',
+                          }}
+                        />
+                        
+                        {/* Main Image Container */}
+                        <div className="relative z-10 h-full flex items-center justify-center p-4">
                           <img
-                            src={
-                              imageErrors[project.id] 
-                                ? getFallbackImage(project) 
-                                : (project.image || getFallbackImage(project))
-                            }
+                            src={projectImage}
                             alt={project.projectTitle}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="w-full h-full object-contain rounded-lg transition-all duration-300 relative z-20"
                             onError={() => handleImageError(project.id)}
                             loading="lazy"
                           />
                           
-                          {/* Image Overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-gray-900/20"></div>
+                          {/* Subtle Image Overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 via-transparent to-gray-900/10 z-30 rounded-l-xl"></div>
                           
                           {/* Project Badges */}
-                          <div className="absolute top-4 left-4 flex items-center gap-2">
-                            <div className="bg-black/70 backdrop-blur-sm rounded-full p-2">
-                              <CategoryIcon className="w-4 h-4 text-white" />
+                          <div className="absolute top-3 left-3 flex items-center gap-2 z-40">
+                            <div className="bg-black/70 backdrop-blur-sm rounded-full p-1.5">
+                              <CategoryIcon className="w-3 h-3 text-white" />
                             </div>
-                            <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full font-medium">
+                            <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full font-medium">
                               {project.category}
                             </span>
-                            <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full font-medium">
+                            <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full font-medium">
                               {project.year}
                             </span>
                           </div>
 
                           {/* Quick Action Buttons */}
-                          <div className="absolute bottom-4 right-4 flex gap-2">
+                          <div className="absolute bottom-3 right-3 flex gap-2 z-40">
                             <a
                               href={project.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2.5 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
+                              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
                               title="View Source Code"
                             >
-                              <FiGithub className="w-4 h-4" />
+                              <FiGithub className="w-3 h-3" />
                             </a>
                             {project.demoLink && (
                               <a
                                 href={project.demoLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2.5 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
+                                className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
                                 title="View Live Demo"
                               >
-                                <FiExternalLink className="w-4 h-4" />
+                                <FiExternalLink className="w-3 h-3" />
                               </a>
                             )}
                           </div>
@@ -393,31 +405,31 @@ const Projects = () => {
                       </div>
 
                       {/* TEXT CONTAINER - Separate container for project content */}
-                      <div className="lg:w-2/5 bg-gray-900/50 backdrop-blur-sm">
-                        <div className="p-8 h-full flex flex-col">
+                      <div className="lg:w-2/5 bg-gray-900/50 backdrop-blur-sm rounded-r-xl">
+                        <div className="p-6 h-full flex flex-col">
                           {/* Project Header */}
-                          <div className="mb-6">
-                            <h3 className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300 mb-2">
+                          <div className="mb-4">
+                            <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300 mb-1">
                               {project.title}
                             </h3>
-                            <h4 className="text-lg text-blue-300 mb-4 font-medium opacity-90">
+                            <h4 className="text-base text-blue-300 mb-3 font-medium opacity-90">
                               {project.projectTitle}
                             </h4>
-                            <p className="text-gray-300 leading-relaxed text-sm">
+                            <p className="text-gray-300 leading-relaxed text-xs">
                               {project.description}
                             </p>
                           </div>
 
                           {/* Key Features */}
-                          <div className="mb-6 flex-grow">
-                            <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                          <div className="mb-4 flex-grow">
+                            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
                               Key Features
                             </h4>
-                            <ul className="space-y-2.5 mb-4">
+                            <ul className="space-y-1.5 mb-3">
                               {visibleFeatures.map((feature, idx) => (
                                 <li key={idx} className="flex items-start">
-                                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                                  <span className="text-gray-300 text-sm leading-relaxed">
+                                  <div className="w-1 h-1 bg-blue-400 rounded-full mt-1.5 mr-2 flex-shrink-0"></div>
+                                  <span className="text-gray-300 text-xs leading-relaxed">
                                     {feature}
                                   </span>
                                 </li>
@@ -428,16 +440,16 @@ const Projects = () => {
                             {project.features.length > 5 && (
                               <button
                                 onClick={() => toggleFeatures(project.id)}
-                                className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1 transition-colors font-medium"
+                                className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1 transition-colors font-medium"
                               >
                                 {expandedFeatures[project.id] ? (
                                   <>
-                                    <FiChevronUp className="w-4 h-4" />
+                                    <FiChevronUp className="w-3 h-3" />
                                     Show Less
                                   </>
                                 ) : (
                                   <>
-                                    <FiChevronDown className="w-4 h-4" />
+                                    <FiChevronDown className="w-3 h-3" />
                                     Show More ({project.features.length - 5})
                                   </>
                                 )}
@@ -446,15 +458,15 @@ const Projects = () => {
                           </div>
 
                           {/* Tech Stack */}
-                          <div className="mb-6">
-                            <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                          <div className="mb-4">
+                            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
                               Tech Stack
                             </h4>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-1.5">
                               {project.stack.map((tech) => (
                                 <span
                                   key={tech}
-                                  className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+                                  className={`px-2 py-1 rounded-full text-xs font-medium ${
                                     techColors[tech] || "bg-gray-700 text-gray-200"
                                   } shadow-sm`}
                                 >
@@ -465,14 +477,14 @@ const Projects = () => {
                           </div>
 
                           {/* Action Buttons */}
-                          <div className="flex gap-3 mt-auto">
+                          <div className="flex gap-2 mt-auto">
                             <a
                               href={project.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-300 flex-1 text-center font-medium text-sm hover:shadow-lg hover:shadow-blue-500/25"
+                              className="flex items-center justify-center gap-1 px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-300 flex-1 text-center font-medium text-xs hover:shadow-lg hover:shadow-blue-500/25"
                             >
-                              <FiGithub className="w-4 h-4" />
+                              <FiGithub className="w-3 h-3" />
                               View Code
                             </a>
                             {project.demoLink && (
@@ -480,9 +492,9 @@ const Projects = () => {
                                 href={project.demoLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-700 border border-gray-600 text-gray-200 hover:bg-gray-600 hover:border-gray-500 rounded-lg transition-all duration-300 flex-1 text-center font-medium text-sm"
+                                className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-700 border border-gray-600 text-gray-200 hover:bg-gray-600 hover:border-gray-500 rounded-lg transition-all duration-300 flex-1 text-center font-medium text-xs"
                               >
-                                <FiExternalLink className="w-4 h-4" />
+                                <FiExternalLink className="w-3 h-3" />
                                 Live Demo
                               </a>
                             )}
@@ -503,21 +515,21 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-center mt-12"
+            className="text-center mt-10"
           >
             <button
               onClick={toggleProjects}
-              className="relative inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-300 overflow-hidden group"
+              className="relative inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-300 overflow-hidden group"
             >
-              <span className="relative z-10 flex items-center gap-2 font-medium">
+              <span className="relative z-10 flex items-center gap-2 font-medium text-sm">
                 {showAll ? (
                   <>
-                    <FiChevronUp className="w-5 h-5" />
+                    <FiChevronUp className="w-4 h-4" />
                     Show Less Projects
                   </>
                 ) : (
                   <>
-                    <FiChevronDown className="w-5 h-5" />
+                    <FiChevronDown className="w-4 h-4" />
                     Load More Projects ({filteredProjects.length - 3})
                   </>
                 )}
@@ -532,14 +544,14 @@ const Projects = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-12"
+            className="text-center py-10"
           >
-            <div className="text-gray-400 text-lg">
+            <div className="text-gray-400 text-base">
               No projects found in the {activeFilter} category.
             </div>
             <button
               onClick={() => setActiveFilter("All")}
-              className="mt-4 text-blue-400 hover:text-blue-300 transition-colors"
+              className="mt-3 text-blue-400 hover:text-blue-300 transition-colors text-sm"
             >
               View all projects
             </button>
