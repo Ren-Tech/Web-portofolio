@@ -23,6 +23,16 @@ export const useSpotify = () => {
     'user-read-email'
   ].join(' ');
 
+  const logout = useCallback(() => {
+    setToken(null);
+    setNowPlaying(null);
+    setIsPlaying(false);
+    setLoading(false);
+    setError(null);
+    window.localStorage.removeItem('spotifyToken');
+    spotifyApi.setAccessToken(null);
+  }, []);
+
   // Check for token in URL on component mount
   useEffect(() => {
     const hash = window.location.hash;
@@ -45,7 +55,7 @@ export const useSpotify = () => {
     } else {
       setLoading(false);
     }
-  }, []);
+  }, []); // Empty dependency array is safe here
 
   // Validate token and fetch initial data
   useEffect(() => {
@@ -91,7 +101,7 @@ export const useSpotify = () => {
     };
 
     fetchInitialData();
-  }, [token]);
+  }, [token, logout]); // Added logout to dependencies
 
   // Separate effect for periodic updates - no loading state
   useEffect(() => {
@@ -128,7 +138,7 @@ export const useSpotify = () => {
     // Update every 5 seconds without showing loading state
     const interval = setInterval(updateNowPlaying, 5000);
     return () => clearInterval(interval);
-  }, [token, loading]);
+  }, [token, loading, logout]); // Added logout to dependencies
 
   const login = useCallback(() => {
     if (!CLIENT_ID) {
@@ -139,16 +149,6 @@ export const useSpotify = () => {
     const authUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}&response_type=${RESPONSE_TYPE}&show_dialog=true`;
     window.location.href = authUrl;
   }, [CLIENT_ID, REDIRECT_URI, SCOPES]);
-
-  const logout = useCallback(() => {
-    setToken(null);
-    setNowPlaying(null);
-    setIsPlaying(false);
-    setLoading(false);
-    setError(null);
-    window.localStorage.removeItem('spotifyToken');
-    spotifyApi.setAccessToken(null);
-  }, []);
 
   const togglePlayback = async () => {
     if (!token) {
