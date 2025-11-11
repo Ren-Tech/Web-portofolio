@@ -1,6 +1,6 @@
 import React from "react";
 import footerImage from "../assets/berserk.png"; // Ensure the image is imported
-import { FaReact } from "react-icons/fa";
+import { SiVercel } from "react-icons/si";
 
 const Footer = () => {
   return (
@@ -21,8 +21,8 @@ const Footer = () => {
             Website powered by:
           </h3>
           <div className="flex items-center justify-center space-x-4">
-            <FaReact className="text-white w-10 h-10" />{" "}
-            <p className="text-white text-2xl font-oswald">React</p>{" "}
+            <SiVercel className="text-white w-10 h-10" />
+            <p className="text-white text-2xl font-oswald">Vercel</p>
           </div>
         </div>
 
