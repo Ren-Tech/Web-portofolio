@@ -1,4 +1,4 @@
-import pogiImage from "../assets/pogi.png";  
+ import pogiImage from "../assets/pogi.png";  
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useSpotify } from "../hooks/useSpotify";
