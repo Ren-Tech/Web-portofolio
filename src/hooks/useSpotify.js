@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import SpotifyWebApi from 'spotify-web-api-js';
 
 const spotifyApi = new SpotifyWebApi();
@@ -9,15 +9,10 @@ export const useSpotify = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  const intervalRef = useRef(null);
 
+  // Use environment variables with fallbacks
   const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-  const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI || 
-    (process.env.NODE_ENV === 'production' 
-      ? window.location.origin 
-      : 'http://localhost:3000');
-  
+  const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI || 'http://localhost:3000';
   const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
   const RESPONSE_TYPE = 'token';
   const SCOPES = [
@@ -28,220 +23,136 @@ export const useSpotify = () => {
     'user-read-email'
   ].join(' ');
 
-  useEffect(() => {
-    if (!CLIENT_ID) {
-      console.error('Spotify Client ID is missing. Please set REACT_APP_SPOTIFY_CLIENT_ID environment variable.');
-    }
-  }, [CLIENT_ID]);
-
   const logout = useCallback(() => {
     setToken(null);
     setNowPlaying(null);
     setIsPlaying(false);
     setLoading(false);
     setError(null);
-    
     window.localStorage.removeItem('spotifyToken');
-    window.localStorage.removeItem('spotifyTokenTimestamp');
-    
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    
     spotifyApi.setAccessToken(null);
   }, []);
 
-  const isTokenExpired = useCallback((tokenTimestamp) => {
-    const ONE_HOUR = 60 * 60 * 1000;
-    return Date.now() - tokenTimestamp > ONE_HOUR;
-  }, []);
-
-  const safeApiCall = useCallback(async (apiCall, operation) => {
-    try {
-      return await apiCall();
-    } catch (error) {
-      console.error(`Spotify API error (${operation}):`, error);
-      
-      const spotifyError = {
-        message: `Failed to ${operation}`,
-        status: error.status,
-        retryable: error.status >= 500 || error.status === 429
-      };
-
-      setError(spotifyError);
-
-      if (error.status === 401) {
-        logout();
-      }
-
-      return null;
-    }
-  }, [logout]);
-
+  // Check for token in URL on component mount
   useEffect(() => {
-    const initializeToken = () => {
-      const hash = window.location.hash;
-      let storedToken = window.localStorage.getItem('spotifyToken');
-      const tokenTimestamp = window.localStorage.getItem('spotifyTokenTimestamp');
+    const hash = window.location.hash;
+    let storedToken = window.localStorage.getItem('spotifyToken');
 
-      if (!storedToken && hash) {
-        const tokenMatch = hash.substring(1).split('&').find(elem => elem.startsWith('access_token'));
-        const expiresInMatch = hash.substring(1).split('&').find(elem => elem.startsWith('expires_in'));
+    if (!storedToken && hash) {
+      const tokenMatch = hash.substring(1).split('&').find(elem => elem.startsWith('access_token'));
+      if (tokenMatch) {
+        storedToken = tokenMatch.split('=')[1];
         
-        if (tokenMatch) {
-          storedToken = tokenMatch.split('=')[1];
-          const expiresIn = expiresInMatch ? parseInt(expiresInMatch.split('=')[1]) : 3600;
-          
-          window.localStorage.setItem('spotifyToken', storedToken);
-          window.localStorage.setItem('spotifyTokenTimestamp', Date.now().toString());
-          
-          window.history.replaceState(null, '', window.location.pathname + window.location.search);
-        }
+        // Clear URL hash
+        window.location.hash = '';
+        window.localStorage.setItem('spotifyToken', storedToken);
       }
+    }
 
-      if (storedToken && tokenTimestamp && isTokenExpired(parseInt(tokenTimestamp))) {
-        console.warn('Spotify token expired');
-        logout();
-        return;
-      }
+    if (storedToken) {
+      setToken(storedToken);
+      spotifyApi.setAccessToken(storedToken);
+    } else {
+      setLoading(false);
+    }
+  }, []); // Empty dependency array is safe here
 
-      if (storedToken) {
-        setToken(storedToken);
-        spotifyApi.setAccessToken(storedToken);
-      } else {
-        setLoading(false);
-      }
-    };
-
-    initializeToken();
-  }, [isTokenExpired, logout]);
-
+  // Validate token and fetch initial data
   useEffect(() => {
     if (!token) return;
 
     const fetchInitialData = async () => {
-      setLoading(true);
-      setError(null);
-
       try {
-        const userProfile = await safeApiCall(
-          () => spotifyApi.getMe(),
-          'validate token'
-        );
+        setLoading(true);
+        setError(null);
+        
+        // Test token validity by making a simple API call
+        const userProfile = await spotifyApi.getMe();
+        console.log('Logged in as:', userProfile.display_name || userProfile.id);
 
-        if (!userProfile) {
-          setLoading(false);
-          return;
-        }
-
-        console.log('Spotify authenticated as:', userProfile.display_name || userProfile.id);
-
-        const playbackState = await safeApiCall(
-          () => spotifyApi.getMyCurrentPlayingTrack(),
-          'fetch playback state'
-        );
-
-        if (playbackState?.item) {
+        const response = await spotifyApi.getMyCurrentPlayingTrack();
+        
+        if (response.item) {
           setNowPlaying({
-            title: playbackState.item.name,
-            artist: playbackState.item.artists.map(artist => artist.name).join(', '),
-            album: playbackState.item.album.name,
-            albumArt: playbackState.item.album.images[0]?.url,
-            progress: playbackState.progress_ms || 0,
-            duration: playbackState.item.duration_ms,
-            isPlaying: playbackState.is_playing,
-            trackId: playbackState.item.id
+            title: response.item.name,
+            artist: response.item.artists.map(artist => artist.name).join(', '),
+            album: response.item.album.name,
+            albumArt: response.item.album.images[0]?.url,
+            progress: response.progress_ms,
+            duration: response.item.duration_ms,
+            isPlaying: response.is_playing,
+            trackId: response.item.id
           });
-          setIsPlaying(playbackState.is_playing);
+          setIsPlaying(response.is_playing);
+        } else {
+          setNowPlaying(null);
         }
       } catch (error) {
-        console.error('Unexpected error in fetchInitialData:', error);
-        setError({
-          message: 'Unexpected error initializing Spotify',
-          retryable: true
-        });
+        console.error('Error fetching initial data:', error);
+        setError('Failed to fetch Spotify data');
+        
+        if (error.status === 401) {
+          // Token is invalid, logout
+          logout();
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchInitialData();
-  }, [token, safeApiCall]);
+  }, [token, logout]); // Added logout to dependencies
 
+  // Separate effect for periodic updates - no loading state
   useEffect(() => {
     if (!token || loading) return;
 
     const updateNowPlaying = async () => {
-      const playbackState = await safeApiCall(
-        () => spotifyApi.getMyCurrentPlayingTrack(),
-        'update playback state'
-      );
-
-      if (playbackState?.item) {
-        setNowPlaying(prev => {
-          const newState = {
-            title: playbackState.item.name,
-            artist: playbackState.item.artists.map(artist => artist.name).join(', '),
-            album: playbackState.item.album.name,
-            albumArt: playbackState.item.album.images[0]?.url,
-            progress: playbackState.progress_ms || 0,
-            duration: playbackState.item.duration_ms,
-            isPlaying: playbackState.is_playing,
-            trackId: playbackState.item.id
-          };
-
-          if (JSON.stringify(prev) === JSON.stringify(newState)) {
-            return prev;
-          }
-
-          return newState;
-        });
-        setIsPlaying(playbackState.is_playing);
-      } else if (playbackState !== null) {
-        setNowPlaying(null);
-        setIsPlaying(false);
+      try {
+        const response = await spotifyApi.getMyCurrentPlayingTrack();
+        
+        if (response.item) {
+          setNowPlaying(prev => ({
+            title: response.item.name,
+            artist: response.item.artists.map(artist => artist.name).join(', '),
+            album: response.item.album.name,
+            albumArt: response.item.album.images[0]?.url,
+            progress: response.progress_ms,
+            duration: response.item.duration_ms,
+            isPlaying: response.is_playing,
+            trackId: response.item.id
+          }));
+          setIsPlaying(response.is_playing);
+        } else {
+          setNowPlaying(null);
+          setIsPlaying(false);
+        }
+      } catch (error) {
+        console.error('Error updating now playing:', error);
+        if (error.status === 401) {
+          logout();
+        }
       }
     };
 
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
-    intervalRef.current = setInterval(updateNowPlaying, 5000);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [token, loading, safeApiCall]);
+    // Update every 5 seconds without showing loading state
+    const interval = setInterval(updateNowPlaying, 5000);
+    return () => clearInterval(interval);
+  }, [token, loading, logout]); // Added logout to dependencies
 
   const login = useCallback(() => {
-    console.log('Spotify login initiated');
-    
     if (!CLIENT_ID) {
-      console.error('Spotify Client ID is missing');
-      setError({
-        message: 'Spotify Client ID is not configured.',
-        retryable: false
-      });
+      setError('Spotify Client ID is not configured. Please check your environment variables.');
       return;
     }
 
     const authUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}&response_type=${RESPONSE_TYPE}&show_dialog=true`;
-    
-    console.log('Redirecting to Spotify auth...');
     window.location.href = authUrl;
   }, [CLIENT_ID, REDIRECT_URI, SCOPES]);
 
   const togglePlayback = async () => {
     if (!token) {
-      setError({
-        message: 'Not authenticated with Spotify',
-        retryable: false
-      });
+      setError('Not authenticated');
       return;
     }
 
@@ -249,46 +160,72 @@ export const useSpotify = () => {
       setError(null);
       
       if (isPlaying) {
-        await safeApiCall(() => spotifyApi.pause(), 'pause playback');
-        if (!error) {
-          setIsPlaying(false);
-          setNowPlaying(prev => prev ? { ...prev, isPlaying: false } : null);
-        }
+        await spotifyApi.pause();
+        setIsPlaying(false);
+        setNowPlaying(prev => prev ? { ...prev, isPlaying: false } : null);
       } else {
-        await safeApiCall(() => spotifyApi.play(), 'start playback');
-        if (!error) {
-          setIsPlaying(true);
-          setNowPlaying(prev => prev ? { ...prev, isPlaying: true } : null);
-        }
+        await spotifyApi.play();
+        setIsPlaying(true);
+        setNowPlaying(prev => prev ? { ...prev, isPlaying: true } : null);
       }
     } catch (error) {
-      console.error('Unexpected error in togglePlayback:', error);
-      setError({
-        message: 'Unexpected error toggling playback',
-        retryable: true
-      });
+      console.error('Error toggling playback:', error);
+      setError('Failed to toggle playback');
+      
+      if (error.status === 401) {
+        logout();
+      }
     }
   };
 
   const skipToNext = async () => {
     if (!token) return;
-    await safeApiCall(() => spotifyApi.skipToNext(), 'skip to next track');
+
+    try {
+      setError(null);
+      await spotifyApi.skipToNext();
+      
+      // Wait a moment then update the current track
+      setTimeout(() => {
+        // The periodic update will pick up the new track
+      }, 1000);
+    } catch (error) {
+      console.error('Error skipping to next:', error);
+      setError('Failed to skip track');
+    }
   };
 
   const skipToPrevious = async () => {
     if (!token) return;
-    await safeApiCall(() => spotifyApi.skipToPrevious(), 'skip to previous track');
+
+    try {
+      setError(null);
+      await spotifyApi.skipToPrevious();
+      
+      // Wait a moment then update the current track
+      setTimeout(() => {
+        // The periodic update will pick up the new track
+      }, 1000);
+    } catch (error) {
+      console.error('Error skipping to previous:', error);
+      setError('Failed to skip track');
+    }
   };
 
   const seek = async (positionMs) => {
     if (!token) return;
-    await safeApiCall(() => spotifyApi.seek(positionMs), 'seek track');
-    setNowPlaying(prev => prev ? { ...prev, progress: positionMs } : null);
-  };
 
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
+    try {
+      setError(null);
+      await spotifyApi.seek(positionMs);
+      
+      // Update progress locally
+      setNowPlaying(prev => prev ? { ...prev, progress: positionMs } : null);
+    } catch (error) {
+      console.error('Error seeking:', error);
+      setError('Failed to seek');
+    }
+  };
 
   return {
     token,
@@ -302,7 +239,6 @@ export const useSpotify = () => {
     skipToNext,
     skipToPrevious,
     seek,
-    clearError,
     isAuthenticated: !!token
   };
 };

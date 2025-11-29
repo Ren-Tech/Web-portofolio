@@ -2,10 +2,9 @@ import pogiImage from "../assets/pogi.png";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useSpotify } from "../hooks/useSpotify";
-import { SpotifyLoginButton } from "../components/SpotifyLoginButton";
 
 // Icons
-const EmailIcon = ({ size = 48, className = "" }) => (
+const EmailIcon = ({ size = 48, className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -20,7 +19,7 @@ const EmailIcon = ({ size = 48, className = "" }) => (
   </svg>
 );
 
-const GithubIcon = ({ size = 48, className = "" }) => (
+const GithubIcon = ({ size = 48, className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -33,7 +32,7 @@ const GithubIcon = ({ size = 48, className = "" }) => (
   </svg>
 );
 
-const LinkedinIcon = ({ size = 48, className = "" }) => (
+const LinkedinIcon = ({ size = 48, className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -63,7 +62,8 @@ const CoffeeIcon = ({ size = 16 }) => (
   </svg>
 );
 
-const SpotifyIcon = ({ size = 24, className = "" }) => (
+// Spotify Icon
+const SpotifyIcon = ({ size = 24, className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -81,10 +81,12 @@ const SpotifyCardWithHeight = ({ onHeightChange }) => {
   const { token, nowPlaying, isPlaying, loading, login } = useSpotify();
   const cardRef = useRef(null);
   
+  // Calculate progress percentage
   const progressPercentage = nowPlaying 
     ? (nowPlaying.progress / nowPlaying.duration) * 100 
     : 0;
 
+  // Update height when component mounts or content changes
   useEffect(() => {
     if (cardRef.current && onHeightChange) {
       const height = cardRef.current.offsetHeight;
@@ -92,6 +94,7 @@ const SpotifyCardWithHeight = ({ onHeightChange }) => {
     }
   }, [token, nowPlaying, loading, onHeightChange]);
 
+  // If not authenticated, show login button
   if (!token) {
     return (
       <motion.div
@@ -105,11 +108,19 @@ const SpotifyCardWithHeight = ({ onHeightChange }) => {
           <SpotifyIcon className="text-green-500" size={20} />
           <span className="text-white font-semibold text-xs">Connect Spotify</span>
         </div>
-        <SpotifyLoginButton onLogin={login} />
+        <motion.button
+          onClick={login}
+          className="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-xs font-medium transition-colors"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          Login with Spotify
+        </motion.button>
       </motion.div>
     );
   }
 
+  // If loading
   if (loading) {
     return (
       <motion.div
@@ -127,6 +138,7 @@ const SpotifyCardWithHeight = ({ onHeightChange }) => {
     );
   }
 
+  // If no track is playing
   if (!nowPlaying) {
     return (
       <motion.div
@@ -160,6 +172,7 @@ const SpotifyCardWithHeight = ({ onHeightChange }) => {
       </div>
       
       <div className="flex items-center space-x-2">
+        {/* Album Art - Smaller */}
         {nowPlaying.albumArt && (
           <img 
             src={nowPlaying.albumArt} 
@@ -168,6 +181,7 @@ const SpotifyCardWithHeight = ({ onHeightChange }) => {
           />
         )}
         
+        {/* Track info - Compact */}
         <div className="flex-1 min-w-0">
           <p className="text-white font-medium text-xs truncate">
             {nowPlaying.title}
@@ -177,6 +191,7 @@ const SpotifyCardWithHeight = ({ onHeightChange }) => {
           </p>
         </div>
         
+        {/* Animated equalizer bars - smaller and only show when playing */}
         {isPlaying && (
           <div className="flex items-end space-x-0.5 h-6">
             {[1, 2, 3, 2, 1].map((height, index) => (
@@ -199,6 +214,7 @@ const SpotifyCardWithHeight = ({ onHeightChange }) => {
         )}
       </div>
       
+      {/* Progress bar - thinner */}
       <div className="mt-2">
         <div className="w-full bg-gray-700 rounded-full h-0.5">
           <motion.div
@@ -222,6 +238,7 @@ const Home = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [spotifyCardHeight, setSpotifyCardHeight] = useState(0);
 
+  // Memoize texts array to prevent unnecessary re-renders
   const texts = useCallback(() => [
     "A passionate Full-Stack Developer",
     "Crafting code with love and coffee ☕",
@@ -238,20 +255,24 @@ const Home = () => {
   const deletingSpeed = 50;
   const pauseBetween = 2000;
 
+  // Function to update Spotify card height
   const updateSpotifyCardHeight = (height) => {
     setSpotifyCardHeight(height);
   };
 
   useEffect(() => {
+    // Check if mobile on component mount and on resize
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
     };
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
+    // Set everything to visible immediately on first load
     setVisible(true);
 
+    // Mouse tracking for parallax effect - only on desktop
     const handleMouseMove = (e) => {
       if (!isMobile) {
         setMousePosition({
@@ -263,6 +284,7 @@ const Home = () => {
 
     window.addEventListener('mousemove', handleMouseMove);
 
+    // Typing effect - start immediately
     const typingTimer = setTimeout(() => {
       const currentTexts = texts();
       const currentText = currentTexts[typingIndex % currentTexts.length];
@@ -285,16 +307,18 @@ const Home = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', checkMobile);
     };
-  }, [typingText, typingIndex, isDeleting, isMobile, texts]);
+  }, [typingText, typingIndex, isDeleting, isMobile, texts]); // Added texts to dependencies
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-[#111827] via-[#1e293b] to-[#0f172a] flex flex-col lg:flex-row justify-center items-center px-4 sm:px-6 lg:px-16 relative overflow-hidden">
+      {/* Spotify Card with height tracking */}
       <SpotifyCardWithHeight onHeightChange={updateSpotifyCardHeight} />
 
+      {/* Status Bar with dynamic positioning */}
       <motion.div
         className="absolute left-4 bg-gray-800/80 backdrop-blur-sm text-white p-3 rounded-lg shadow-lg z-10 border border-gray-700 max-w-xs"
         style={{ 
-          top: `calc(1rem + ${spotifyCardHeight}px + 0.5rem)`
+          top: `calc(1rem + ${spotifyCardHeight}px + 0.5rem)` // 1rem (top-4) + card height + 0.5rem gap
         }}
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
@@ -312,14 +336,17 @@ const Home = () => {
         </div>
       </motion.div>
 
+      {/* Enhanced Background decorative elements - static on mobile */}
       <div className="absolute inset-0 opacity-10">
         {isMobile ? (
+          // Static background for mobile
           <>
             <div className="absolute top-20 left-4 sm:left-10 w-48 sm:w-72 h-48 sm:h-72 bg-blue-500 rounded-full filter blur-3xl" />
             <div className="absolute bottom-20 right-4 sm:right-10 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500 rounded-full filter blur-3xl" />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 sm:w-64 h-48 sm:h-64 bg-cyan-500 rounded-full filter blur-3xl" />
           </>
         ) : (
+          // Animated background for desktop
           <>
             <motion.div 
               className="absolute top-20 left-4 sm:left-10 w-48 sm:w-72 h-48 sm:h-72 bg-blue-500 rounded-full filter blur-3xl"
@@ -354,6 +381,7 @@ const Home = () => {
         )}
       </div>
 
+      {/* Floating Code Elements */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(6)].map((_, i) => (
           <motion.div
@@ -379,7 +407,9 @@ const Home = () => {
         ))}
       </div>
 
+      {/* Main Content Container */}
       <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center justify-center space-y-8 lg:space-y-0 lg:space-x-12 z-10 pt-16 lg:pt-0">
+        {/* Profile Image with Enhanced Effects */}
         <motion.div
           className="order-first lg:order-none w-full lg:w-1/2 flex justify-center"
           initial={{ opacity: 0, scale: 0.8 }}
@@ -402,7 +432,9 @@ const Home = () => {
           </motion.div>
         </motion.div>
 
+        {/* Right Side - Enhanced Content */}
         <div className="flex flex-col lg:flex-row items-center w-full lg:w-1/2">
+          {/* Social Icons with Enhanced Animation */}
           <motion.div
             className="flex lg:flex-col space-x-6 lg:space-x-0 lg:space-y-6 lg:mr-8 mb-6 lg:mb-0 justify-center lg:justify-start"
             initial={{ opacity: 0, x: -50 }}
@@ -434,6 +466,7 @@ const Home = () => {
             ))}
           </motion.div>
 
+          {/* Animated Divider - Hidden on mobile */}
           <motion.div
             className="hidden lg:block w-1 h-48 bg-gradient-to-b from-blue-500 to-purple-500 opacity-50 mr-8 rounded-full"
             initial={{ height: 0, opacity: 0 }}
@@ -441,6 +474,7 @@ const Home = () => {
             transition={{ duration: 0.7, delay: 0.2 }}
           />
 
+          {/* Enhanced Text Content */}
           <motion.div
             className="text-center lg:text-left w-full"
             initial={{ opacity: 0, x: 50 }}
@@ -474,6 +508,7 @@ const Home = () => {
               </span>
             </motion.div>
 
+            {/* Stats Counter - Responsive grid */}
             <motion.div
               className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8 max-w-md mx-auto lg:mx-0"
               initial={{ opacity: 0, y: 20 }}
@@ -495,6 +530,7 @@ const Home = () => {
               ))}
             </motion.div>
 
+            {/* Enhanced Action Buttons - Stack on mobile */}
             <motion.div
               className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 justify-center lg:justify-start"
               initial={{ opacity: 0, y: 30 }}
@@ -529,6 +565,7 @@ const Home = () => {
               </motion.a>
             </motion.div>
 
+            {/* Quick Contact Info */}
             <motion.div
               className="mt-6 sm:mt-8 text-gray-400 text-sm text-center lg:text-left"
               initial={{ opacity: 0 }}
@@ -542,6 +579,7 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Scroll Indicator - Only show on desktop */}
       {!isMobile && (
         <motion.div
           className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2"
