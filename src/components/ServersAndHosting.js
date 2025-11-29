@@ -1,5 +1,11 @@
 import React from "react";
-import { SiHostinger, SiUbuntu, SiRender } from "react-icons/si";
+import {
+  SiHostinger,
+  SiUbuntu,
+  SiRender,
+  SiVercel,
+} from "react-icons/si";
+import { LuZap } from "react-icons/lu";
 import { PiInfinityBold } from "react-icons/pi";
 import { IoLogoFirebase } from "react-icons/io5";
 
@@ -9,6 +15,10 @@ const tools = [
   { name: "InfinityFree", icon: <PiInfinityBold />, color: "text-purple-400" },
   { name: "Ubuntu", icon: <SiUbuntu />, color: "text-orange-500" },
   { name: "Render", icon: <SiRender />, color: "text-blue-400" },
+
+  // Added
+  { name: "Vercel", icon: <SiVercel />, color: "text-white" },
+  { name: "Surge", icon: <LuZap />, color: "text-yellow-300" },
 ];
 
 const ServersAndHosting = () => {

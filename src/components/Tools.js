@@ -1,5 +1,5 @@
 import React from "react";
-import { FaGitAlt, FaGithub, FaApple } from "react-icons/fa";
+import { FaGitAlt, FaGithub, FaApple, FaRobot } from "react-icons/fa";
 import {
   SiVisualstudiocode,
   SiFigma,
@@ -9,7 +9,17 @@ import {
   SiAdobexd,
   SiAndroidstudio,
 } from "react-icons/si";
-import { IoTerminal } from "react-icons/io5";
+import { IoTerminal, IoRocket, IoDiamond } from "react-icons/io5";
+import { GiCrystalBall, GiPaperPlane } from "react-icons/gi";
+
+// Custom icons for AI tools (using proper React Icons)
+const AIIcons = {
+  ChatGPT: () => <FaRobot className="text-4xl" />,
+  Claude: () => <GiCrystalBall className="text-4xl" />,
+  Gemini: () => <IoDiamond className="text-4xl" />,
+  DeepSeek: () => <IoRocket className="text-4xl" />,
+  TestFlight: () => <GiPaperPlane className="text-4xl" />,
+};
 
 const tools = [
   { name: "Git", icon: <FaGitAlt />, color: "text-red-500" },
@@ -23,7 +33,11 @@ const tools = [
   { name: "Postman", icon: <SiPostman />, color: "text-orange-500" },
   { name: "Terminal", icon: <IoTerminal />, color: "text-gray-400" },
   { name: "Xcode", icon: <FaApple />, color: "text-gray-300" },
-  { name: "TestFlight", icon: <FaApple />, color: "text-sky-400" },
+  { name: "TestFlight", icon: <AIIcons.TestFlight />, color: "text-sky-400" },
+  { name: "ChatGPT", icon: <AIIcons.ChatGPT />, color: "text-green-400" },
+  { name: "Claude", icon: <AIIcons.Claude />, color: "text-orange-300" },
+  { name: "Gemini", icon: <AIIcons.Gemini />, color: "text-blue-300" },
+  { name: "DeepSeek", icon: <AIIcons.DeepSeek />, color: "text-purple-400" },
 ];
 
 const Tools = () => {
@@ -83,13 +97,11 @@ const Tools = () => {
                   className="group relative bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-amber-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-amber-500/10 flex flex-col items-center"
                 >
                   <div
-                    className={`text-5xl mb-3 ${tool.color} transition-transform duration-300 group-hover:scale-110`}
+                    className={`text-5xl mb-3 ${tool.color} transition-transform duration-300 group-hover:scale-110 flex items-center justify-center`}
                   >
-                    {React.cloneElement(tool.icon, {
-                      className: "w-full h-full",
-                    })}
+                    {tool.icon}
                   </div>
-                  <p className="text-lg font-medium text-white mt-2">
+                  <p className="text-lg font-medium text-white mt-2 text-center">
                     {tool.name}
                   </p>
                   <div className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-amber-400/20 pointer-events-none transition-all duration-300"></div>

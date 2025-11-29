@@ -1,5 +1,5 @@
 import pogiImage from "../assets/pogi.png";  
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useSpotify } from "../hooks/useSpotify";
 
@@ -235,14 +235,14 @@ const Home = () => {
   const [typingIndex, setTypingIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [showExtraInfo, setShowExtraInfo] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [spotifyCardHeight, setSpotifyCardHeight] = useState(0);
 
-  const texts = [
+  // Memoize texts array to prevent unnecessary re-renders
+  const texts = useCallback(() => [
     "A passionate Full-Stack Developer",
     "Crafting code with love and coffee ☕",
-  ];
+  ], []);
 
   const stats = [
     { label: "Years of Experience", value: "3+" },
@@ -271,7 +271,6 @@ const Home = () => {
 
     // Set everything to visible immediately on first load
     setVisible(true);
-    setShowExtraInfo(true);
 
     // Mouse tracking for parallax effect - only on desktop
     const handleMouseMove = (e) => {
@@ -287,7 +286,8 @@ const Home = () => {
 
     // Typing effect - start immediately
     const typingTimer = setTimeout(() => {
-      const currentText = texts[typingIndex % texts.length];
+      const currentTexts = texts();
+      const currentText = currentTexts[typingIndex % currentTexts.length];
       if (isDeleting) {
         setTypingText(currentText.substring(0, typingText.length - 1));
         if (typingText === "") {
@@ -307,7 +307,7 @@ const Home = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', checkMobile);
     };
-  }, [typingText, typingIndex, isDeleting, isMobile]);
+  }, [typingText, typingIndex, isDeleting, isMobile, texts]); // Added texts to dependencies
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-[#111827] via-[#1e293b] to-[#0f172a] flex flex-col lg:flex-row justify-center items-center px-4 sm:px-6 lg:px-16 relative overflow-hidden">
