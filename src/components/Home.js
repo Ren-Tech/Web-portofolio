@@ -94,6 +94,16 @@ const SpotifyCardWithHeight = ({ onHeightChange }) => {
     }
   }, [token, nowPlaying, loading, onHeightChange]);
 
+  // Handle login click - Production fix
+  const handleLogin = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    console.log('Initiating Spotify login...');
+    login(e);
+  };
+
   // If not authenticated, show login button
   if (!token) {
     return (
@@ -109,8 +119,9 @@ const SpotifyCardWithHeight = ({ onHeightChange }) => {
           <span className="text-white font-semibold text-xs">Connect Spotify</span>
         </div>
         <motion.button
-          onClick={login}
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-xs font-medium transition-colors"
+          onClick={handleLogin}
+          type="button"
+          className="w-full bg-green-600 hover:bg-green-700 text-white py-1.5 px-3 rounded text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -307,7 +318,7 @@ const Home = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', checkMobile);
     };
-  }, [typingText, typingIndex, isDeleting, isMobile, texts]); // Added texts to dependencies
+  }, [typingText, typingIndex, isDeleting, isMobile, texts]);
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-[#111827] via-[#1e293b] to-[#0f172a] flex flex-col lg:flex-row justify-center items-center px-4 sm:px-6 lg:px-16 relative overflow-hidden">

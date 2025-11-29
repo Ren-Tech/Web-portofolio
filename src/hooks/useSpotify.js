@@ -252,7 +252,13 @@ export const useSpotify = () => {
     };
   }, [token, loading, safeApiCall]);
 
-  const login = useCallback(() => {
+  const login = useCallback((e) => {
+    // Prevent default behavior and stop propagation
+    if (e && e.preventDefault) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     if (!CLIENT_ID) {
       setError({
         message: 'Spotify Client ID is not configured. Please check your environment variables.',
@@ -261,7 +267,10 @@ export const useSpotify = () => {
       return;
     }
 
+    // For production, ensure redirect URI matches exactly what's in Spotify Dashboard
     const authUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}&response_type=${RESPONSE_TYPE}&show_dialog=true`;
+    
+    console.log('Redirecting to Spotify auth...');
     window.location.href = authUrl;
   }, [CLIENT_ID, REDIRECT_URI, SCOPES]);
 
