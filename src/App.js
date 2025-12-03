@@ -1,12 +1,12 @@
-import Home from "./components/Home";
-import Frontend from "./components/Frontend";
-import Tools from "./components/Tools";
-import Projects from "./components/Projects";
-import Contact from "./components/Contact";
-import ServersAndHosting from "./components/ServersAndHosting";
-import Backend from "./components/Backend";
-import Footer from "./components/Footer";
-import MeetTheDev from "./components/MeetTheDev"; // ✅ Add this line
+import Home from "./pages/Home";
+import Frontend from "./pages/Frontend";
+import Tools from "./pages/Tools";
+import Projects from "./pages/Projects";
+import Contact from "./pages/Contact";
+import ServersAndHosting from "./pages/ServersAndHosting";
+import Backend from "./pages/Backend";
+import Footer from "./pages/Footer";
+import MeetTheDev from "./pages/MeetTheDev"; // ✅ Add this line
 
 function App() {
   return (
