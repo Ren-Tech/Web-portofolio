@@ -1,0 +1,157 @@
+import React from "react";
+
+const SkillSection = ({
+  id,
+  title,
+  subtitle,
+  description,
+  skills,
+  accentColor = "amber",
+  blobColors = [],
+  sectionTitle,
+  learningText = "Currently learning new technologies",
+}) => {
+  // Color configurations
+  const colorClasses = {
+    amber: {
+      titleGradient: "from-amber-400 to-amber-600",
+      border: "border-amber-400/30",
+      shadow: "shadow-amber-500/10",
+      line: "from-amber-500 to-transparent",
+      innerTitle: "text-amber-400",
+    },
+    blue: {
+      titleGradient: "from-blue-400 to-blue-600",
+      border: "border-blue-400/30",
+      shadow: "shadow-blue-500/10",
+      line: "from-blue-500 to-transparent",
+      innerTitle: "text-blue-400",
+    },
+    green: {
+      titleGradient: "from-green-400 to-green-600",
+      border: "border-green-400/30",
+      shadow: "shadow-green-500/10",
+      line: "from-green-500 to-transparent",
+      innerTitle: "text-green-400",
+    },
+    purple: {
+      titleGradient: "from-purple-400 to-purple-600",
+      border: "border-purple-400/30",
+      shadow: "shadow-purple-500/10",
+      line: "from-purple-500 to-transparent",
+      innerTitle: "text-purple-400",
+    },
+  };
+
+  const colors = colorClasses[accentColor] || colorClasses.amber;
+
+  // Default blob colors if none provided
+  const defaultBlobColors = ["green-500", "yellow-500", "red-500"];
+  const finalBlobColors = blobColors.length > 0 ? blobColors : defaultBlobColors;
+
+  return (
+    <section
+      id={id}
+      className="relative overflow-hidden bg-gradient-to-b from-[#111827] to-[#0f172a] py-20 px-4 sm:px-8 md:px-16 lg:px-24"
+    >
+      {/* Background decorative blobs */}
+      <div className="absolute inset-0 opacity-5">
+        {finalBlobColors.map((color, index) => (
+          <div
+            key={index}
+            className={`absolute ${getBlobPosition(index)} w-${getBlobSize(index)} h-${getBlobSize(index)} bg-${color} rounded-full filter blur-3xl`}
+          ></div>
+        ))}
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Section Header - Main Title with amber gradient */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 mb-4">
+            {sectionTitle || title}
+          </h2>
+          <div className="w-20 h-1 bg-gradient-to-r from-amber-500 to-transparent mx-auto mb-6"></div>
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            {subtitle}
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-12">
+          {/* Left Side - Description */}
+          <div className="w-full lg:w-2/5">
+            <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl border border-gray-700 shadow-xl hover:shadow-amber-500/10 transition-shadow duration-300">
+              <h3 className={`text-3xl md:text-4xl font-bold ${colors.innerTitle} mb-6`}>
+                {title}
+              </h3>
+              <p className="text-lg text-gray-300 leading-relaxed">
+                {description}
+              </p>
+              <div className="mt-8">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
+                  <span className="text-sm text-gray-400">
+                    {learningText}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side - Skills */}
+          <div className="w-full lg:w-3/5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+              {skills.map((skill, index) => (
+                <SkillCard key={index} skill={skill} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Decorative divider */}
+        <div className="mt-16 flex justify-center">
+          <div className="w-32 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-50"></div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const SkillCard = ({ skill }) => {
+  return (
+    <div className="group relative bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-amber-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-amber-500/10 flex flex-col items-center">
+      <div
+        className={`text-5xl mb-3 ${skill.color} transition-transform duration-300 group-hover:scale-110 flex items-center justify-center`}
+      >
+        {React.isValidElement(skill.icon)
+          ? React.cloneElement(skill.icon, {
+              className: "w-full h-full",
+            })
+          : skill.icon}
+      </div>
+      <p className="text-lg font-medium text-white mt-2 text-center">
+        {skill.name}
+      </p>
+      <div className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-amber-400/20 pointer-events-none transition-all duration-300"></div>
+    </div>
+  );
+};
+
+// Helper functions for blob positioning
+const getBlobPosition = (index) => {
+  const positions = [
+    "top-10 left-10",
+    "bottom-20 right-10",
+    "top-1/2 left-1/3",
+    "top-20 left-16",
+    "bottom-24 right-16",
+    "top-1/3 left-1/2 transform -translate-x-1/2",
+  ];
+  return positions[index % positions.length];
+};
+
+const getBlobSize = (index) => {
+  const sizes = ["72", "96", "64", "80", "96", "72"];
+  return sizes[index % sizes.length];
+};
+
+export default SkillSection;
