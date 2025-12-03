@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const Contact = () => {
+  const form = useRef();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -10,6 +12,26 @@ const Contact = () => {
   const [submitStatus, setSubmitStatus] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [isEmailJSLoaded, setIsEmailJSLoaded] = useState(false);
+
+  // Load the emailjs library via script tag to avoid module resolution issues
+  useEffect(() => {
+    if (typeof window.emailjs === 'undefined') {
+      const script = document.createElement('script');
+      script.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js";
+      script.onload = () => {
+        // Initialize EmailJS once the script is loaded
+        const PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+        if (window.emailjs && PUBLIC_KEY) {
+            window.emailjs.init(PUBLIC_KEY);
+            setIsEmailJSLoaded(true);
+        }
+      };
+      document.body.appendChild(script);
+    } else {
+        setIsEmailJSLoaded(true);
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,41 +46,39 @@ const Contact = () => {
     setSubmitStatus(status);
     setShowModal(true);
     
-    // Auto-hide modal after 5 seconds
     setTimeout(() => {
       setShowModal(false);
     }, 5000);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (!isEmailJSLoaded || typeof window.emailjs === 'undefined') {
+        showStatusModal("Email service not initialized yet. Please try again in a moment.", 'error');
+        return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus(null);
 
-    try {
-      const response = await fetch('http://localhost:5000/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+    // Access environment variables
+    const SERVICE_ID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
+    const TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
+    
+    // Note: The public key is initialized in useEffect, not passed here
+
+    window.emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form.current)
+      .then((result) => {
+          console.log("EmailJS Success:", result.text);
+          setFormData({ name: "", email: "", message: "" });
+          showStatusModal("Message sent successfully! I'll get back to you soon.", 'success');
+          setIsSubmitting(false);
+      }, (error) => {
+          console.error("EmailJS Error:", error.text);
+          showStatusModal("Failed to send message. Please try again or contact me directly.", 'error');
+          setIsSubmitting(false);
       });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setFormData({ name: "", email: "", message: "" });
-        showStatusModal("Message sent successfully! I'll get back to you soon.", 'success');
-      } else {
-        console.error('Failed to send email:', result.error);
-        showStatusModal("Failed to send message. Please try again or contact me directly at clarence11soriano@gmail.com", 'error');
-      }
-    } catch (error) {
-      console.error('Error sending email:', error);
-      showStatusModal("Network error. Please check your connection and try again.", 'error');
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const closeModal = () => {
@@ -91,7 +111,6 @@ const Contact = () => {
           <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className={`relative bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 ${showModal ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
               <div className={`p-8 rounded-t-2xl relative overflow-hidden`}>
-                {/* Decorative gradient overlay */}
                 <div className={`absolute inset-0 bg-gradient-to-r ${submitStatus === 'success' ? 'from-green-500/10 to-emerald-500/10' : 'from-red-500/10 to-pink-500/10'} rounded-t-2xl`}></div>
                 
                 <div className="relative z-10">
@@ -129,10 +148,13 @@ const Contact = () => {
         <div className="flex justify-center">
           <div className="w-full max-w-4xl">
             <form 
+              ref={form} 
               className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-lg border border-gray-700/50 p-10 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden" 
               onSubmit={handleSubmit}
             >
-              {/* Form decorative elements */}
+              {/* HIDDEN INPUT FOR TIME - Required for your email template */}
+              <input type="hidden" name="time" value={new Date().toLocaleString()} />
+
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5 rounded-3xl"></div>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 rounded-t-3xl"></div>
               
@@ -140,8 +162,7 @@ const Contact = () => {
                 <div className="grid md:grid-cols-2 gap-8 mb-8">
                   <div>
                     <label className="block text-gray-200 font-semibold mb-3 text-lg">
-                      Name
-                      <span className="text-blue-400 ml-1">*</span>
+                      Name <span className="text-blue-400 ml-1">*</span>
                     </label>
                     <input
                       className="w-full p-4 bg-gray-800/60 border-2 border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300 outline-none hover:border-gray-500"
@@ -155,8 +176,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <label className="block text-gray-200 font-semibold mb-3 text-lg">
-                      Email
-                      <span className="text-blue-400 ml-1">*</span>
+                      Email <span className="text-blue-400 ml-1">*</span>
                     </label>
                     <input
                       className="w-full p-4 bg-gray-800/60 border-2 border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300 outline-none hover:border-gray-500"
@@ -172,8 +192,7 @@ const Contact = () => {
                 
                 <div className="mb-10">
                   <label className="block text-gray-200 font-semibold mb-3 text-lg">
-                    Message
-                    <span className="text-blue-400 ml-1">*</span>
+                    Message <span className="text-blue-400 ml-1">*</span>
                   </label>
                   <textarea
                     className="w-full p-4 bg-gray-800/60 border-2 border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400 transition-all duration-300 outline-none resize-none hover:border-gray-500"
@@ -189,19 +208,18 @@ const Contact = () => {
                 <button
                   className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 text-white py-5 rounded-xl font-bold text-lg hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center shadow-lg hover:shadow-2xl transform hover:-translate-y-1 disabled:transform-none disabled:hover:shadow-lg relative overflow-hidden group"
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !isEmailJSLoaded}
                 >
-                  {/* Button shine effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-700"></div>
                   
                   <div className="relative z-10 flex items-center">
-                    {isSubmitting ? (
+                    {(isSubmitting || !isEmailJSLoaded) ? (
                       <>
                         <svg className="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Sending Message...
+                        {isEmailJSLoaded ? "Sending Message..." : "Loading Service..."}
                       </>
                     ) : (
                       <>
@@ -213,10 +231,13 @@ const Contact = () => {
                     )}
                   </div>
                 </button>
+                {!isEmailJSLoaded && (
+                    <p className="text-center text-sm text-yellow-500 mt-4">
+                        Waiting for Email service to load...
+                    </p>
+                )}
               </div>
             </form>
-
-          
           </div>
         </div>
       </div>
