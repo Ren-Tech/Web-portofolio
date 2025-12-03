@@ -1,5 +1,5 @@
 import React from "react";
-import footerImage from "../assets/berserk.png"; // Ensure the image is imported
+import footerImage from "../assets/portfolio-logo.png"; // Ensure the image is imported
 import { SiVercel } from "react-icons/si";
 
 const Footer = () => {

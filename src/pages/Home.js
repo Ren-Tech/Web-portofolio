@@ -77,7 +77,7 @@ const Home = () => {
 
   const stats = [
     { label: "Years of Experience", value: "3+" },
-    { label: "Projects Completed", value: "50+" },
+    { label: "Projects Completed", value: "20+" },
     { label: "Lines of Code", value: "100k+" },
     { label: "Coffee Cups", value: "∞" }
   ];
