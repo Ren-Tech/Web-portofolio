@@ -28,7 +28,7 @@ const Footer = () => {
 
         {/* Right-aligned copyright text */}
         <p className="w-full md:w-auto mt-4 md:mt-0 text-white text-center md:text-right animate-fadeInRightPartial font-oswald">
-          &copy; 2025 Clarence. All rights reserved.
+          &copy; 2026 Clarence. All rights reserved.
         </p>
       </div>
     </footer>

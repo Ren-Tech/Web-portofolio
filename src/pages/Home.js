@@ -1,8 +1,8 @@
-import pogiImage from "../assets/pogi.png";  
+import pogiImage from "../assets/pogi.png";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 
-// Icons
+// Icons (No change needed)
 const EmailIcon = ({ size = 48, className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +77,7 @@ const Home = () => {
 
   const stats = [
     { label: "Years of Experience", value: "3+" },
-    { label: "Projects Completed", value: "20+" },
+    { label: "Projects Completed", value: "15+" },
     { label: "Lines of Code", value: "100k+" },
     { label: "Coffee Cups", value: "∞" }
   ];
@@ -102,6 +102,7 @@ const Home = () => {
     const handleMouseMove = (e) => {
       if (!isMobile) {
         setMousePosition({
+          // Scale down the movement for a subtle effect
           x: (e.clientX - window.innerWidth / 2) / 50,
           y: (e.clientY - window.innerHeight / 2) / 50,
         });
@@ -133,7 +134,7 @@ const Home = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', checkMobile);
     };
-  }, [typingText, typingIndex, isDeleting, isMobile, texts]); // Added texts to dependencies
+  }, [typingText, typingIndex, isDeleting, isMobile, texts]);
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-[#111827] via-[#1e293b] to-[#0f172a] flex flex-col lg:flex-row justify-center items-center px-4 sm:px-6 lg:px-16 relative overflow-hidden">
@@ -166,7 +167,7 @@ const Home = () => {
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 sm:w-64 h-48 sm:h-64 bg-cyan-500 rounded-full filter blur-3xl" />
           </>
         ) : (
-          // Animated background for desktop
+          // Animated background for desktop (Parallax effect)
           <>
             <motion.div 
               className="absolute top-20 left-4 sm:left-10 w-48 sm:w-72 h-48 sm:h-72 bg-blue-500 rounded-full filter blur-3xl"
@@ -229,19 +230,30 @@ const Home = () => {
 
       {/* Main Content Container */}
       <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center justify-center space-y-8 lg:space-y-0 lg:space-x-12 z-10 pt-16 lg:pt-0">
-        {/* Profile Image with Enhanced Effects */}
+        {/* Profile Image with Enhanced 3D-Tilt Effect */}
         <motion.div
           className="order-first lg:order-none w-full lg:w-1/2 flex justify-center"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: visible ? 1 : 0, scale: visible ? 1 : 0.8 }}
           transition={{ duration: 0.5 }}
         >
+          {/* Added 3D-Tilt animation: 
+            The image rotates slightly on the X and Y axis based on mouse position, 
+            creating a cool, interactive 3D depth effect on load.
+          */}
           <motion.div
-            className="relative group"
+            className="relative group w-64 h-64 sm:w-80 sm:h-80 perspective-[1000px]"
+            style={{ transformStyle: "preserve-3d" }}
             whileHover={{ scale: isMobile ? 1 : 1.05 }}
+            // 3D-Tilt Animation based on mouse position
+            animate={!isMobile ? {
+              rotateY: mousePosition.x * 0.4, 
+              rotateX: mousePosition.y * -0.4, 
+              transition: { type: "spring", stiffness: 100, damping: 10 }
+            } : {}}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-2xl shadow-2xl mb-8 lg:mb-0 relative overflow-hidden">
+            <div className="w-full h-full rounded-2xl shadow-2xl mb-8 lg:mb-0 relative overflow-hidden">
               <img 
                 src={pogiImage} 
                 alt="Clarence" 
@@ -262,9 +274,9 @@ const Home = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             {[
-              { href: "mailto:clarence11soriano@gmail.com", icon: EmailIcon},
-              { href: "https://github.com/Ren-Tech", icon: GithubIcon },
-              { href: "https://www.linkedin.com/in/clarence-soriano-a1621b260/", icon: LinkedinIcon }
+              { href: "mailto:clarence11soriano@gmail.com", icon: EmailIcon, label: "Email" },
+              { href: "https://github.com/Ren-Tech", icon: GithubIcon, label: "GitHub" },
+              { href: "https://www.linkedin.com/in/clarence-soriano-a1621b260/", icon: LinkedinIcon, label: "LinkedIn" }
             ].map(({ href, icon: Icon, label }, i) => (
               <motion.a
                 key={label}

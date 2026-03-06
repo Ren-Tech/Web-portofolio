@@ -95,7 +95,7 @@ const allProjects = [
   },
   {
     id: 4,
-    image: importImage("kizuna.png"),
+    image: importImage("kizu.jpg"),
     title: "Kizuna Anime Tracker",
     projectTitle: "Cross-Platform Mobile Application",
     description:
@@ -121,7 +121,7 @@ const allProjects = [
   },
   {
     id: 5,
-    image: importImage(""),
+    image: importImage("learn.png"),
     title: "Learning Stack Management Web Application",
     projectTitle: "Learning Management System",
     description:
@@ -136,36 +136,36 @@ const allProjects = [
       "Secure authentication system"
     ],
     link: "https://github.com/project-five",
-    demoLink: "https://lms-app-demo.com",
+    demoLink: "https://learningstack.net/",
     stack: ["React", "Node.js", "Express", "Socket.IO", "MongoDB", "TailwindCSS"],
     category: "Web",
     year: 2025,
   },
-  {
-    id: 6,
-    image: importImage("hydrofarm.png"),
-    title: "Hydro Farm Monitoring System",
-    projectTitle: "Cross-Platform IoT Web & Mobile Application",
-    description:
-      "Hydro Farm is an IoT-powered mobile and web application that monitors aquaculture water quality in real time using Arduino Uno and NodeMCU. It tracks critical parameters such as salinity, pH, temperature, and turbidity, while providing alerts, analytics, and role-based management. Designed for farm owners, technicians, and workers, the system ensures optimal pond conditions, species-specific guidance, and reliable operations even offline.",
-    features: [
-      "Real-time monitoring of water salinity, pH, temperature, and turbidity",
-      "Parameter trends and system status dashboard",
-      "Alert system with customizable min/max thresholds, notifications, and animations",
-      "Analytics with calendar-based views: last 24 hours, weekly, monthly, all data",
-      "User management: add users, assign roles (Owner, Technician, Worker), activate/deactivate accounts",
-      "Pond management: add ponds with species, dimensions, and species-specific categories",
-      "Species profiles with acceptable ranges for water parameters",
-      "Guidance system suggesting adjustments to improve water quality",
-      "Offline mode with data sync when Wi-Fi is unavailable",
-      "Automated water quality reports and summary statistics"
-    ],
-    link: "https://github.com/project-hydrofarm",
-    demoLink: "https://hydrofarm-demo.com",
-    stack: ["Flutter", "Dart", "Arduino", "ESP8266", "Arduino", "Firebase", "C++"],
-    category: "IoT",
-    year: 2025,
-  },
+  // {
+  //   id: 6,
+  //   image: importImage("hydrofarm.png"),
+  //   title: "Hydro Farm Monitoring System",
+  //   projectTitle: "Cross-Platform IoT Web & Mobile Application",
+  //   description:
+  //     "Hydro Farm is an IoT-powered mobile and web application that monitors aquaculture water quality in real time using Arduino Uno and NodeMCU. It tracks critical parameters such as salinity, pH, temperature, and turbidity, while providing alerts, analytics, and role-based management. Designed for farm owners, technicians, and workers, the system ensures optimal pond conditions, species-specific guidance, and reliable operations even offline.",
+  //   features: [
+  //     "Real-time monitoring of water salinity, pH, temperature, and turbidity",
+  //     "Parameter trends and system status dashboard",
+  //     "Alert system with customizable min/max thresholds, notifications, and animations",
+  //     "Analytics with calendar-based views: last 24 hours, weekly, monthly, all data",
+  //     "User management: add users, assign roles (Owner, Technician, Worker), activate/deactivate accounts",
+  //     "Pond management: add ponds with species, dimensions, and species-specific categories",
+  //     "Species profiles with acceptable ranges for water parameters",
+  //     "Guidance system suggesting adjustments to improve water quality",
+  //     "Offline mode with data sync when Wi-Fi is unavailable",
+  //     "Automated water quality reports and summary statistics"
+  //   ],
+  //   link: "https://github.com/project-hydrofarm",
+  //   demoLink: "https://hydrofarm-demo.com",
+  //   stack: ["Flutter", "Dart", "Arduino", "ESP8266", "Arduino", "Firebase", "C++"],
+  //   category: "IoT",
+  //   year: 2025,
+  // },
 ];
 
 const Projects = () => {
