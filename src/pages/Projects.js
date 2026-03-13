@@ -154,7 +154,7 @@ const allProjects = [
 ];
 
 // ─────────────────────────────────────────────────────────────
-// Mobile Showcase Component — redesigned
+// Mobile Showcase Component — screen label badge removed
 // ─────────────────────────────────────────────────────────────
 const MobileShowcase = ({ project, getFallbackImage }) => {
   const [activeIdx, setActiveIdx] = useState(0);
@@ -163,7 +163,6 @@ const MobileShowcase = ({ project, getFallbackImage }) => {
   const [isDragging, setIsDragging] = useState(false);
   const dragStartX = useRef(null);
   const screenshots = project.screenshots || [project.image];
-  const labels = project.screenLabels || screenshots.map((_, i) => `Screen ${i + 1}`);
   const total = screenshots.length;
 
   const goTo = (idx) => setActiveIdx((idx + total) % total);
@@ -212,7 +211,6 @@ const MobileShowcase = ({ project, getFallbackImage }) => {
         {screenshots.map((src, idx) => {
           const offset = idx - activeIdx;
           const wrappedOffset = ((offset % total) + total) % total;
-          // Show at most prev / active / next
           const displayOffset =
             wrappedOffset === 0 ? 0
             : wrappedOffset === 1 ? 1
@@ -236,7 +234,7 @@ const MobileShowcase = ({ project, getFallbackImage }) => {
               onClick={() => isActive ? openLightbox(idx) : goTo(idx)}
               whileHover={isActive ? { scale: 1.03 } : { scale: 0.82, opacity: 0.7 }}
             >
-              {/* Phone frame - simplified without notch */}
+              {/* Phone frame */}
               <div
                 className="relative"
                 style={{
@@ -268,31 +266,14 @@ const MobileShowcase = ({ project, getFallbackImage }) => {
                 }}>
                   <img
                     src={src || getFallbackImage(project)}
-                    alt={`${project.title} - ${labels[idx]}`}
+                    alt={`${project.title} screenshot ${idx + 1}`}
                     style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                     onError={(e) => { e.target.src = getFallbackImage(project); }}
                     draggable={false}
                   />
                 </div>
 
-                {/* Active screen label badge */}
-                {isActive && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    style={{
-                      position: "absolute", bottom: -30, left: "50%", transform: "translateX(-50%)",
-                      background: "rgba(99,102,241,0.85)", backdropFilter: "blur(8px)",
-                      color: "#fff", fontSize: 10, fontWeight: 600,
-                      padding: "3px 10px", borderRadius: 20, whiteSpace: "nowrap",
-                      letterSpacing: "0.05em", textTransform: "uppercase",
-                    }}
-                  >
-                    {labels[idx]}
-                  </motion.div>
-                )}
-
-                {/* Zoom icon hint on active */}
+                {/* Zoom icon hint on active — NO label badge */}
                 {isActive && (
                   <div style={{
                     position: "absolute", top: 14, right: 10,
@@ -379,7 +360,7 @@ const MobileShowcase = ({ project, getFallbackImage }) => {
               className="relative flex flex-col items-center"
               style={{ maxWidth: 320, width: "90vw" }}
             >
-              {/* Phone frame in lightbox - simplified */}
+              {/* Phone frame in lightbox */}
               <div
                 style={{
                   background: "linear-gradient(145deg, #1e1e2e, #16161d)",
@@ -392,22 +373,10 @@ const MobileShowcase = ({ project, getFallbackImage }) => {
                 <div style={{ borderRadius: 26, overflow: "hidden", aspectRatio: "9/19.5" }}>
                   <img
                     src={screenshots[lightboxIdx] || getFallbackImage(project)}
-                    alt={labels[lightboxIdx]}
+                    alt={`${project.title} screenshot ${lightboxIdx + 1}`}
                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
                 </div>
-              </div>
-
-              {/* Lightbox label */}
-              <div className="mt-4 text-center">
-                <span style={{
-                  background: "linear-gradient(90deg, #6366f1, #3b82f6)",
-                  color: "#fff", fontSize: 11, fontWeight: 700,
-                  padding: "4px 14px", borderRadius: 20,
-                  textTransform: "uppercase", letterSpacing: "0.08em",
-                }}>
-                  {labels[lightboxIdx]}
-                </span>
               </div>
 
               {/* Lightbox navigation */}
@@ -481,17 +450,17 @@ const Projects = () => {
   };
 
   const getCategoryColor = (category) => {
-    const colors = { 
-      IoT: "#3b82f6",  // blue
-      Web: "#6366f1",  // indigo
-      Mobile: "#10b981", // emerald
-      Desktop: "#f59e0b" // amber
+    const colors = {
+      IoT: "#3b82f6",
+      Web: "#6366f1",
+      Mobile: "#10b981",
+      Desktop: "#f59e0b"
     };
     return colors[category] || "#6b7280";
   };
 
   // ─────────────────────────────────────────────────────────────
-  // Web Carousel Component - horizontal scroll for web projects
+  // Web Carousel — counter text + screen label badge removed
   // ─────────────────────────────────────────────────────────────
   const WebCarousel = ({ project, getFallbackImage }) => {
     const [activeIdx, setActiveIdx] = useState(0);
@@ -525,15 +494,16 @@ const Projects = () => {
 
     return (
       <div className="relative w-full h-full flex flex-col items-center justify-center p-4">
+        <style>{`.web-carousel-scroll::-webkit-scrollbar { display: none; }`}</style>
         {/* Gradient Background */}
-        <div 
+        <div
           className="absolute inset-0"
           style={{
             background: `radial-gradient(ellipse at center, ${getCategoryColor(project.category)}30 0%, transparent 70%)`,
           }}
         />
         {/* Grid Pattern */}
-        <div 
+        <div
           className="absolute inset-0 opacity-10 pointer-events-none"
           style={{
             backgroundImage: `linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)`,
@@ -541,63 +511,76 @@ const Projects = () => {
           }}
         />
 
-        {/* Carousel Container */}
-        <div className="relative z-10 w-full max-w-2xl">
-          <div 
-            ref={scrollRef}
-            className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent snap-x snap-mandatory scroll-smooth"
-            onScroll={handleScroll}
-            style={{ scrollbarWidth: 'thin' }}
-          >
-            {screenshots.map((src, idx) => (
-              <div 
-                key={idx} 
-                className="flex-shrink-0 w-full snap-center"
-              >
-                <img
-                  src={src || getFallbackImage(project)}
-                  alt={`${project.title} - ${labels[idx]}`}
-                  className="w-full h-auto max-h-[320px] object-contain rounded-lg shadow-2xl cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
-                  onClick={() => openLightbox(idx)}
-                  onError={(e) => { e.target.src = getFallbackImage(project); }}
-                  loading="lazy"
-                />
-              </div>
-            ))}
+        {/* Carousel + Arrows row */}
+        <div className="relative z-10 w-full flex items-center gap-3">
+
+          {/* Left Arrow — outside image */}
+          {total > 1 ? (
+            <button
+              onClick={() => scroll('left')}
+              className="flex-shrink-0 flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110"
+              style={{
+                width: 36, height: 36,
+                background: "rgba(255,255,255,0.08)",
+                border: "1px solid rgba(255,255,255,0.15)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              <FiChevronLeft style={{ width: 16, height: 16, color: "#fff" }} />
+            </button>
+          ) : <div style={{ width: 36 }} />}
+
+          {/* Image carousel */}
+          <div className="flex-1 overflow-hidden rounded-lg">
+            <div
+              ref={scrollRef}
+              className="flex snap-x snap-mandatory scroll-smooth web-carousel-scroll"
+              onScroll={handleScroll}
+              style={{
+                overflowX: 'scroll',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                WebkitOverflowScrolling: 'touch',
+              }}
+            >
+              {screenshots.map((src, idx) => (
+                <div
+                  key={idx}
+                  style={{ minWidth: '100%', flexShrink: 0 }}
+                  className="snap-center"
+                >
+                  <img
+                    src={src || getFallbackImage(project)}
+                    alt={`${project.title} screenshot ${idx + 1}`}
+                    className="w-full h-auto max-h-[300px] object-contain rounded-lg shadow-2xl cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
+                    onClick={() => openLightbox(idx)}
+                    onError={(e) => { e.target.src = getFallbackImage(project); }}
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Navigation Arrows */}
-          {total > 1 && (
-            <>
-              <button
-                onClick={() => scroll('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-20 flex items-center justify-center rounded-full transition-all duration-200"
-                style={{
-                  width: 40, height: 40,
-                  background: "rgba(255,255,255,0.1)",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                <FiChevronLeft style={{ width: 18, height: 18, color: "#fff" }} />
-              </button>
-              <button
-                onClick={() => scroll('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-20 flex items-center justify-center rounded-full transition-all duration-200"
-                style={{
-                  width: 40, height: 40,
-                  background: "rgba(255,255,255,0.1)",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                <FiChevronRight style={{ width: 18, height: 18, color: "#fff" }} />
-              </button>
-            </>
-          )}
+          {/* Right Arrow — outside image */}
+          {total > 1 ? (
+            <button
+              onClick={() => scroll('right')}
+              className="flex-shrink-0 flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110"
+              style={{
+                width: 36, height: 36,
+                background: "rgba(255,255,255,0.08)",
+                border: "1px solid rgba(255,255,255,0.15)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              <FiChevronRight style={{ width: 16, height: 16, color: "#fff" }} />
+            </button>
+          ) : <div style={{ width: 36 }} />}
+
         </div>
 
-        {/* Dot Indicators */}
+        {/* Dot Indicators only — no counter text */}
         {total > 1 && (
           <div className="flex gap-2 mt-4">
             {screenshots.map((_, idx) => (
@@ -625,9 +608,7 @@ const Projects = () => {
             ))}
           </div>
         )}
-        <p className="text-center text-sm text-gray-400 mt-2">
-          {activeIdx + 1} / {total}
-        </p>
+        {/* Counter text removed */}
 
         {/* Lightbox */}
         <AnimatePresence>
@@ -650,19 +631,11 @@ const Projects = () => {
               >
                 <img
                   src={screenshots[lightboxIdx] || getFallbackImage(project)}
-                  alt={labels[lightboxIdx]}
+                  alt={`${project.title} screenshot ${lightboxIdx + 1}`}
                   className="w-full h-auto max-h-[80vh] object-contain rounded-lg shadow-2xl"
                 />
-                <div className="mt-4 text-center">
-                  <span style={{
-                    background: `linear-gradient(90deg, ${getCategoryColor(project.category)}, ${getCategoryColor(project.category)}aa)`,
-                    color: "#fff", fontSize: 12, fontWeight: 600,
-                    padding: "6px 16px", borderRadius: 20,
-                    textTransform: "uppercase", letterSpacing: "0.08em",
-                  }}>
-                    {labels[lightboxIdx]}
-                  </span>
-                </div>
+                {/* Screen label badge removed from lightbox too */}
+
                 {/* Navigation */}
                 {total > 1 && (
                   <div className="flex items-center justify-center gap-6 mt-4">
@@ -840,7 +813,6 @@ const Projects = () => {
                         {useMobileShowcase ? (
                           /* ── Mobile showcase (phone frames) ── */
                           <div className="relative z-10 w-full h-full overflow-visible" style={{ minHeight: 360 }}>
-                            {/* Subtle grid pattern */}
                             <div
                               className="absolute inset-0 opacity-5 pointer-events-none"
                               style={{
@@ -912,17 +884,15 @@ const Projects = () => {
                             </div>
                           </div>
                         ) : (
-                          /* Regular image for web projects - with gradient background */
+                          /* Regular image for web projects */
                           <div className="relative z-10 h-full flex items-center justify-center p-4">
-                            {/* Gradient Background for Web Projects */}
-                            <div 
+                            <div
                               className="absolute inset-0"
                               style={{
                                 background: `radial-gradient(ellipse at center, ${getCategoryColor(project.category)}20 0%, transparent 70%)`,
                               }}
                             />
-                            {/* Grid Pattern Overlay */}
-                            <div 
+                            <div
                               className="absolute inset-0 opacity-5"
                               style={{
                                 backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
