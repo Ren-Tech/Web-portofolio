@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FiGithub,
   FiExternalLink,
@@ -9,10 +9,6 @@ import {
   FiSmartphone,
   FiGlobe,
   FiCpu,
-  FiChevronLeft,
-  FiChevronRight,
-  FiMaximize2,
-  FiX,
 } from "react-icons/fi";
 
 // Import images from assets folder
@@ -24,16 +20,10 @@ const importImage = (imageName) => {
   }
 };
 
-const importMultipleImages = (imageNames) => {
-  return imageNames.map(name => importImage(name)).filter(img => img !== null);
-};
-
 const allProjects = [
   {
     id: 1,
     image: importImage("web-portfolio.png"),
-    screenshots: importMultipleImages(["web-portfolio.png", "pogi.png", "portfolio-logo.png"]),
-    screenLabels: ["Home", "About", "Projects"],
     title: "This Web Portfolio",
     projectTitle: "My Personal Portfolio",
     description:
@@ -54,7 +44,6 @@ const allProjects = [
   {
     id: 2,
     image: importImage("smp.png"),
-    screenshots: importMultipleImages(["smp.png", "me1.jpg", "me2.jpg"]),
     title: "IoT Based - Water Quality Monitoring System",
     projectTitle: "Mobile and Web Application",
     description:
@@ -75,8 +64,6 @@ const allProjects = [
   {
     id: 3,
     image: importImage("news-scraper.png"),
-    screenshots: importMultipleImages(["news-scraper.png", "market-news.png", "learn.png"]),
-    screenLabels: ["Dashboard", "News Feed", "Analytics"],
     title: "Financial News Aggregator",
     projectTitle: "Web Application",
     description:
@@ -102,8 +89,6 @@ const allProjects = [
   {
     id: 4,
     image: importImage("kizu.jpg"),
-    screenshots: importMultipleImages(["kizu.jpg", "me3.jpg", "me4.jpg", "pogi.png"]),
-    screenLabels: ["Home", "Browse", "Details", "Profile"],
     title: "Kizuna Anime Tracker",
     projectTitle: "Cross-Platform Mobile Application",
     description:
@@ -130,8 +115,6 @@ const allProjects = [
   {
     id: 5,
     image: importImage("learn.png"),
-    screenshots: importMultipleImages(["learn.png", "web-portfolio.png", "pogi.png"]),
-    screenLabels: ["Dashboard", "Courses", "Profile"],
     title: "Learning Stack Management Web Application",
     projectTitle: "Learning Management System",
     description:
@@ -153,285 +136,6 @@ const allProjects = [
   },
 ];
 
-// ─────────────────────────────────────────────────────────────
-// Mobile Showcase Component — screen label badge removed
-// ─────────────────────────────────────────────────────────────
-const MobileShowcase = ({ project, getFallbackImage }) => {
-  const [activeIdx, setActiveIdx] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIdx, setLightboxIdx] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragStartX = useRef(null);
-  const screenshots = project.screenshots || [project.image];
-  const total = screenshots.length;
-
-  const goTo = (idx) => setActiveIdx((idx + total) % total);
-
-  // Drag / swipe support
-  const handleDragStart = (e) => {
-    dragStartX.current = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
-    setIsDragging(false);
-  };
-  const handleDragEnd = (e) => {
-    if (dragStartX.current === null) return;
-    const endX = e.type === "touchend" ? e.changedTouches[0].clientX : e.clientX;
-    const diff = dragStartX.current - endX;
-    if (Math.abs(diff) > 30) {
-      setIsDragging(true);
-      diff > 0 ? goTo(activeIdx + 1) : goTo(activeIdx - 1);
-    }
-    dragStartX.current = null;
-  };
-
-  const openLightbox = (idx) => {
-    if (isDragging) return;
-    setLightboxIdx(idx);
-    setLightboxOpen(true);
-  };
-
-  return (
-    <div className="relative w-full h-full flex items-center justify-center p-4 select-none">
-      {/* ── Ambient glow behind phones ── */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div
-          className="w-48 h-48 rounded-full opacity-20 blur-3xl"
-          style={{ background: "radial-gradient(circle, #6366f1, #3b82f6)" }}
-        />
-      </div>
-
-      {/* ── Phone stack ── */}
-      <div
-        className="relative flex items-center justify-center"
-        style={{ width: "100%", maxWidth: 340, height: 320 }}
-        onMouseDown={handleDragStart}
-        onMouseUp={handleDragEnd}
-        onTouchStart={handleDragStart}
-        onTouchEnd={handleDragEnd}
-      >
-        {screenshots.map((src, idx) => {
-          const offset = idx - activeIdx;
-          const wrappedOffset = ((offset % total) + total) % total;
-          const displayOffset =
-            wrappedOffset === 0 ? 0
-            : wrappedOffset === 1 ? 1
-            : wrappedOffset === total - 1 ? -1
-            : null;
-          if (displayOffset === null) return null;
-
-          const isActive = displayOffset === 0;
-          const scale = isActive ? 1 : 0.78;
-          const x = displayOffset * 140;
-          const zIndex = isActive ? 20 : 10;
-          const opacity = isActive ? 1 : 0.55;
-          const blurAmount = isActive ? 0 : 2;
-
-          return (
-            <motion.div
-              key={idx}
-              animate={{ x, scale, opacity, filter: `blur(${blurAmount}px)` }}
-              transition={{ type: "spring", stiffness: 280, damping: 28 }}
-              style={{ position: "absolute", zIndex, cursor: isActive ? "zoom-in" : "pointer" }}
-              onClick={() => isActive ? openLightbox(idx) : goTo(idx)}
-              whileHover={isActive ? { scale: 1.03 } : { scale: 0.82, opacity: 0.7 }}
-            >
-              {/* Phone frame */}
-              <div
-                className="relative"
-                style={{
-                  width: isActive ? 170 : 130,
-                  background: "linear-gradient(145deg, #1e1e2e, #16161d)",
-                  borderRadius: 28,
-                  padding: "10px 6px 14px",
-                  boxShadow: isActive
-                    ? "0 30px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.12)"
-                    : "0 10px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04)",
-                  transition: "width 0.3s ease",
-                }}
-              >
-                {/* Side buttons */}
-                <div style={{
-                  position: "absolute", right: -3, top: 50,
-                  width: 3, height: 24, background: "#2a2a3e", borderRadius: "0 3px 3px 0",
-                }} />
-                <div style={{
-                  position: "absolute", left: -3, top: 40,
-                  width: 3, height: 16, background: "#2a2a3e", borderRadius: "3px 0 0 3px",
-                }} />
-
-                {/* Screen */}
-                <div style={{
-                  borderRadius: 18, overflow: "hidden",
-                  background: "#000",
-                  aspectRatio: "9/19.5",
-                }}>
-                  <img
-                    src={src || getFallbackImage(project)}
-                    alt={`${project.title} screenshot ${idx + 1}`}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                    onError={(e) => { e.target.src = getFallbackImage(project); }}
-                    draggable={false}
-                  />
-                </div>
-
-                {/* Zoom icon hint on active — NO label badge */}
-                {isActive && (
-                  <div style={{
-                    position: "absolute", top: 14, right: 10,
-                    background: "rgba(0,0,0,0.5)", borderRadius: "50%",
-                    padding: 4, display: "flex",
-                  }}>
-                    <FiMaximize2 style={{ width: 8, height: 8, color: "#fff" }} />
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* ── Navigation arrows ── */}
-      <button
-        onClick={() => goTo(activeIdx - 1)}
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center rounded-full transition-all duration-200"
-        style={{
-          width: 32, height: 32,
-          background: "rgba(255,255,255,0.07)",
-          border: "1px solid rgba(255,255,255,0.12)",
-          backdropFilter: "blur(6px)",
-        }}
-      >
-        <FiChevronLeft style={{ width: 14, height: 14, color: "#e2e8f0" }} />
-      </button>
-      <button
-        onClick={() => goTo(activeIdx + 1)}
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center rounded-full transition-all duration-200"
-        style={{
-          width: 32, height: 32,
-          background: "rgba(255,255,255,0.07)",
-          border: "1px solid rgba(255,255,255,0.12)",
-          backdropFilter: "blur(6px)",
-        }}
-      >
-        <FiChevronRight style={{ width: 14, height: 14, color: "#e2e8f0" }} />
-      </button>
-
-      {/* ── Dot indicators ── */}
-      <div
-        className="absolute flex gap-1.5 items-center"
-        style={{ bottom: 4, left: "50%", transform: "translateX(-50%)" }}
-      >
-        {screenshots.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => goTo(idx)}
-            style={{
-              width: idx === activeIdx ? 18 : 6,
-              height: 6,
-              borderRadius: 3,
-              background: idx === activeIdx
-                ? "linear-gradient(90deg, #6366f1, #3b82f6)"
-                : "rgba(255,255,255,0.2)",
-              border: "none",
-              padding: 0,
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-            }}
-          />
-        ))}
-      </div>
-
-      {/* ── Lightbox ── */}
-      <AnimatePresence>
-        {lightboxOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            style={{ background: "rgba(0,0,0,0.92)", backdropFilter: "blur(12px)" }}
-            onClick={() => setLightboxOpen(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.7, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.7, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative flex flex-col items-center"
-              style={{ maxWidth: 320, width: "90vw" }}
-            >
-              {/* Phone frame in lightbox */}
-              <div
-                style={{
-                  background: "linear-gradient(145deg, #1e1e2e, #16161d)",
-                  borderRadius: 36,
-                  padding: "14px 8px 18px",
-                  boxShadow: "0 40px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.15)",
-                  width: "100%",
-                }}
-              >
-                <div style={{ borderRadius: 26, overflow: "hidden", aspectRatio: "9/19.5" }}>
-                  <img
-                    src={screenshots[lightboxIdx] || getFallbackImage(project)}
-                    alt={`${project.title} screenshot ${lightboxIdx + 1}`}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                </div>
-              </div>
-
-              {/* Lightbox navigation */}
-              <div className="flex items-center gap-4 mt-4">
-                <button
-                  onClick={() => setLightboxIdx((lightboxIdx - 1 + total) % total)}
-                  className="flex items-center justify-center rounded-full"
-                  style={{
-                    width: 40, height: 40,
-                    background: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.14)",
-                  }}
-                >
-                  <FiChevronLeft style={{ color: "#fff", width: 16, height: 16 }} />
-                </button>
-                <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 13 }}>
-                  {lightboxIdx + 1} / {total}
-                </span>
-                <button
-                  onClick={() => setLightboxIdx((lightboxIdx + 1) % total)}
-                  className="flex items-center justify-center rounded-full"
-                  style={{
-                    width: 40, height: 40,
-                    background: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.14)",
-                  }}
-                >
-                  <FiChevronRight style={{ color: "#fff", width: 16, height: 16 }} />
-                </button>
-              </div>
-
-              {/* Close */}
-              <button
-                onClick={() => setLightboxOpen(false)}
-                className="absolute -top-4 -right-4 flex items-center justify-center rounded-full"
-                style={{
-                  width: 36, height: 36,
-                  background: "rgba(255,255,255,0.1)",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  color: "#fff",
-                }}
-              >
-                <FiX style={{ width: 16, height: 16 }} />
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
-
-// ─────────────────────────────────────────────────────────────
-// Main Projects Component
-// ─────────────────────────────────────────────────────────────
 const Projects = () => {
   const [visibleProjects, setVisibleProjects] = useState(3);
   const [showAll, setShowAll] = useState(false);
@@ -447,230 +151,6 @@ const Projects = () => {
     const colors = { IoT: "3b82f6", Web: "6366f1", Mobile: "10b981", Desktop: "f59e0b" };
     const color = colors[project.category] || "6b7280";
     return `https://via.placeholder.com/800x400/${color}/ffffff?text=${encodeURIComponent(project.title)}`;
-  };
-
-  const getCategoryColor = (category) => {
-    const colors = {
-      IoT: "#3b82f6",
-      Web: "#6366f1",
-      Mobile: "#10b981",
-      Desktop: "#f59e0b"
-    };
-    return colors[category] || "#6b7280";
-  };
-
-  // ─────────────────────────────────────────────────────────────
-  // Web Carousel — counter text + screen label badge removed
-  // ─────────────────────────────────────────────────────────────
-  const WebCarousel = ({ project, getFallbackImage }) => {
-    const [activeIdx, setActiveIdx] = useState(0);
-    const [lightboxOpen, setLightboxOpen] = useState(false);
-    const [lightboxIdx, setLightboxIdx] = useState(0);
-    const scrollRef = useRef(null);
-    const screenshots = project.screenshots || [project.image];
-    const labels = project.screenLabels || screenshots.map((_, i) => `Screen ${i + 1}`);
-    const total = screenshots.length;
-
-    const scroll = (direction) => {
-      if (scrollRef.current) {
-        const scrollAmount = scrollRef.current.offsetWidth * 0.8;
-        scrollRef.current.scrollBy({
-          left: direction === 'left' ? -scrollAmount : scrollAmount,
-          behavior: 'smooth'
-        });
-      }
-    };
-
-    const handleScroll = (e) => {
-      const container = e.target;
-      const newIndex = Math.round(container.scrollLeft / container.offsetWidth);
-      setActiveIdx(newIndex);
-    };
-
-    const openLightbox = (idx) => {
-      setLightboxIdx(idx);
-      setLightboxOpen(true);
-    };
-
-    return (
-      <div className="relative w-full h-full flex flex-col items-center justify-center p-4">
-        <style>{`.web-carousel-scroll::-webkit-scrollbar { display: none; }`}</style>
-        {/* Gradient Background */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `radial-gradient(ellipse at center, ${getCategoryColor(project.category)}30 0%, transparent 70%)`,
-          }}
-        />
-        {/* Grid Pattern */}
-        <div
-          className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)`,
-            backgroundSize: '24px 24px',
-          }}
-        />
-
-        {/* Carousel + Arrows row */}
-        <div className="relative z-10 w-full flex items-center gap-3">
-
-          {/* Left Arrow — outside image */}
-          {total > 1 ? (
-            <button
-              onClick={() => scroll('left')}
-              className="flex-shrink-0 flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110"
-              style={{
-                width: 36, height: 36,
-                background: "rgba(255,255,255,0.08)",
-                border: "1px solid rgba(255,255,255,0.15)",
-                backdropFilter: "blur(8px)",
-              }}
-            >
-              <FiChevronLeft style={{ width: 16, height: 16, color: "#fff" }} />
-            </button>
-          ) : <div style={{ width: 36 }} />}
-
-          {/* Image carousel */}
-          <div className="flex-1 overflow-hidden rounded-lg">
-            <div
-              ref={scrollRef}
-              className="flex snap-x snap-mandatory scroll-smooth web-carousel-scroll"
-              onScroll={handleScroll}
-              style={{
-                overflowX: 'scroll',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-                WebkitOverflowScrolling: 'touch',
-              }}
-            >
-              {screenshots.map((src, idx) => (
-                <div
-                  key={idx}
-                  style={{ minWidth: '100%', flexShrink: 0 }}
-                  className="snap-center"
-                >
-                  <img
-                    src={src || getFallbackImage(project)}
-                    alt={`${project.title} screenshot ${idx + 1}`}
-                    className="w-full h-auto max-h-[300px] object-contain rounded-lg shadow-2xl cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
-                    onClick={() => openLightbox(idx)}
-                    onError={(e) => { e.target.src = getFallbackImage(project); }}
-                    loading="lazy"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Arrow — outside image */}
-          {total > 1 ? (
-            <button
-              onClick={() => scroll('right')}
-              className="flex-shrink-0 flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110"
-              style={{
-                width: 36, height: 36,
-                background: "rgba(255,255,255,0.08)",
-                border: "1px solid rgba(255,255,255,0.15)",
-                backdropFilter: "blur(8px)",
-              }}
-            >
-              <FiChevronRight style={{ width: 16, height: 16, color: "#fff" }} />
-            </button>
-          ) : <div style={{ width: 36 }} />}
-
-        </div>
-
-        {/* Dot Indicators only — no counter text */}
-        {total > 1 && (
-          <div className="flex gap-2 mt-4">
-            {screenshots.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  if (scrollRef.current) {
-                    const scrollPosition = idx * scrollRef.current.offsetWidth;
-                    scrollRef.current.scrollTo({ left: scrollPosition, behavior: 'smooth' });
-                    setActiveIdx(idx);
-                  }
-                }}
-                style={{
-                  width: idx === activeIdx ? 24 : 8,
-                  height: 8,
-                  borderRadius: 4,
-                  background: idx === activeIdx
-                    ? `linear-gradient(90deg, ${getCategoryColor(project.category)}, ${getCategoryColor(project.category)}aa)`
-                    : "rgba(255,255,255,0.2)",
-                  border: "none",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                }}
-              />
-            ))}
-          </div>
-        )}
-        {/* Counter text removed */}
-
-        {/* Lightbox */}
-        <AnimatePresence>
-          {lightboxOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center"
-              style={{ background: "rgba(0,0,0,0.92)", backdropFilter: "blur(12px)" }}
-              onClick={() => setLightboxOpen(false)}
-            >
-              <motion.div
-                initial={{ scale: 0.7, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.7, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                onClick={(e) => e.stopPropagation()}
-                className="relative max-w-4xl w-full mx-4"
-              >
-                <img
-                  src={screenshots[lightboxIdx] || getFallbackImage(project)}
-                  alt={`${project.title} screenshot ${lightboxIdx + 1}`}
-                  className="w-full h-auto max-h-[80vh] object-contain rounded-lg shadow-2xl"
-                />
-                {/* Screen label badge removed from lightbox too */}
-
-                {/* Navigation */}
-                {total > 1 && (
-                  <div className="flex items-center justify-center gap-6 mt-4">
-                    <button
-                      onClick={() => setLightboxIdx((lightboxIdx - 1 + total) % total)}
-                      className="flex items-center justify-center rounded-full"
-                      style={{ width: 44, height: 44, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.14)" }}
-                    >
-                      <FiChevronLeft style={{ color: "#fff", width: 18, height: 18 }} />
-                    </button>
-                    <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 14 }}>
-                      {lightboxIdx + 1} / {total}
-                    </span>
-                    <button
-                      onClick={() => setLightboxIdx((lightboxIdx + 1) % total)}
-                      className="flex items-center justify-center rounded-full"
-                      style={{ width: 44, height: 44, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.14)" }}
-                    >
-                      <FiChevronRight style={{ color: "#fff", width: 18, height: 18 }} />
-                    </button>
-                  </div>
-                )}
-                <button
-                  onClick={() => setLightboxOpen(false)}
-                  className="absolute -top-2 -right-2 flex items-center justify-center rounded-full"
-                  style={{ width: 40, height: 40, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", color: "#fff" }}
-                >
-                  <FiX style={{ width: 18, height: 18 }} />
-                </button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    );
   };
 
   const toggleProjects = () => {
@@ -725,12 +205,6 @@ const Projects = () => {
 
   const categoryIcons = { IoT: FiCpu, Web: FiGlobe, Mobile: FiSmartphone, Desktop: FiCode };
   const filters = ["All", "Web", "Mobile", "IoT"];
-
-  const isMobileOrIoT = (project) =>
-    project.category === "Mobile" || project.category === "IoT";
-
-  const hasMultipleScreenshots = (project) =>
-    project.screenshots && project.screenshots.length > 1;
 
   return (
     <section id="projects" className="bg-gradient-to-b from-[#111827] to-[#0f172a] py-16 relative overflow-hidden">
@@ -792,8 +266,6 @@ const Projects = () => {
               const projectImage = imageErrors[project.id]
                 ? getFallbackImage(project)
                 : (project.image || getFallbackImage(project));
-              const useMobileShowcase = isMobileOrIoT(project);
-              const useWebCarousel = project.category === "Web" && hasMultipleScreenshots(project);
 
               return (
                 <motion.div
@@ -804,140 +276,59 @@ const Projects = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="group"
                 >
-                  <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-lg border border-gray-700/50 rounded-xl shadow-xl overflow-visible hover:shadow-2xl transition-all duration-300">
+                  <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-lg border border-gray-700/50 rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300">
                     <div className="flex flex-col lg:flex-row min-h-[400px]">
 
-                      {/* ── IMAGE / SHOWCASE COLUMN ── */}
-                      <div className={`lg:w-3/5 relative overflow-hidden rounded-l-xl ${useMobileShowcase ? "bg-gradient-to-br from-gray-950 via-[#0d1117] to-gray-900" : ""}`}>
+                      {/* ── IMAGE COLUMN ── */}
+                      <div className="lg:w-3/5 relative overflow-hidden rounded-l-xl flex items-center justify-center p-4 min-h-[300px] bg-gray-950">
+                        {/* Blurred image background */}
+                        <img
+                          src={projectImage}
+                          alt=""
+                          className="absolute inset-0 w-full h-full object-cover filter blur-md scale-105 opacity-50 z-0 pointer-events-none"
+                          aria-hidden="true"
+                        />
+                        {/* Dark overlay for contrast */}
+                        <div className="absolute inset-0 bg-black/30 z-10 pointer-events-none" />
 
-                        {useMobileShowcase ? (
-                          /* ── Mobile showcase (phone frames) ── */
-                          <div className="relative z-10 w-full h-full overflow-visible" style={{ minHeight: 360 }}>
-                            <div
-                              className="absolute inset-0 opacity-5 pointer-events-none"
-                              style={{
-                                backgroundImage: "linear-gradient(rgba(99,102,241,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.4) 1px, transparent 1px)",
-                                backgroundSize: "32px 32px",
-                              }}
-                            />
-                            <MobileShowcase project={project} getFallbackImage={getFallbackImage} />
+                        {/* Main Image */}
+                        <img
+                          src={projectImage}
+                          alt={project.projectTitle}
+                          className="w-full max-w-md lg:max-w-full h-auto max-h-[350px] object-contain rounded-lg transition-all duration-300 relative z-20 shadow-2xl"
+                          onError={() => handleImageError(project.id)}
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-gray-900/20 z-30 rounded-l-xl pointer-events-none" />
 
-                            {/* Badges */}
-                            <div className="absolute top-3 left-3 flex items-center gap-2 z-40">
-                              <div className="bg-black/70 backdrop-blur-sm rounded-full p-1.5">
-                                <CategoryIcon className="w-3 h-3 text-white" />
-                              </div>
-                              <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full font-medium">
-                                {project.category}
-                              </span>
-                              <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full font-medium">
-                                {project.year}
-                              </span>
-                            </div>
-
-                            {/* Quick action links */}
-                            <div className="absolute bottom-3 right-3 flex gap-2 z-40">
-                              <a href={project.link} target="_blank" rel="noopener noreferrer"
-                                className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
-                                title="View Source Code">
-                                <FiGithub className="w-3 h-3" />
-                              </a>
-                              {project.demoLink && (
-                                <a href={project.demoLink} target="_blank" rel="noopener noreferrer"
-                                  className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
-                                  title="View Live Demo">
-                                  <FiExternalLink className="w-3 h-3" />
-                                </a>
-                              )}
-                            </div>
+                        {/* Badges */}
+                        <div className="absolute top-3 left-3 flex items-center gap-2 z-40">
+                          <div className="bg-black/70 backdrop-blur-sm rounded-full p-1.5">
+                            <CategoryIcon className="w-3 h-3 text-white" />
                           </div>
-                        ) : useWebCarousel ? (
-                          /* ── Web carousel for web projects ── */
-                          <div className="relative z-10 w-full h-full overflow-visible">
-                            <WebCarousel project={project} getFallbackImage={getFallbackImage} />
-                            {/* Badges */}
-                            <div className="absolute top-3 left-3 flex items-center gap-2 z-40">
-                              <div className="bg-black/70 backdrop-blur-sm rounded-full p-1.5">
-                                <CategoryIcon className="w-3 h-3 text-white" />
-                              </div>
-                              <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full font-medium">
-                                {project.category}
-                              </span>
-                              <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full font-medium">
-                                {project.year}
-                              </span>
-                            </div>
-                            {/* Quick action links */}
-                            <div className="absolute bottom-3 right-3 flex gap-2 z-40">
-                              <a href={project.link} target="_blank" rel="noopener noreferrer"
-                                className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
-                                title="View Source Code">
-                                <FiGithub className="w-3 h-3" />
-                              </a>
-                              {project.demoLink && (
-                                <a href={project.demoLink} target="_blank" rel="noopener noreferrer"
-                                  className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
-                                  title="View Live Demo">
-                                  <FiExternalLink className="w-3 h-3" />
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          /* Regular image for web projects */
-                          <div className="relative z-10 h-full flex items-center justify-center p-4">
-                            <div
-                              className="absolute inset-0"
-                              style={{
-                                background: `radial-gradient(ellipse at center, ${getCategoryColor(project.category)}20 0%, transparent 70%)`,
-                              }}
-                            />
-                            <div
-                              className="absolute inset-0 opacity-5"
-                              style={{
-                                backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-                                backgroundSize: '32px 32px',
-                              }}
-                            />
-                            <img
-                              src={projectImage}
-                              alt={project.projectTitle}
-                              className="w-full max-w-md lg:max-w-full h-auto max-h-[350px] object-contain rounded-lg transition-all duration-300 relative z-20 shadow-2xl"
-                              onError={() => handleImageError(project.id)}
-                              loading="lazy"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 via-transparent to-gray-900/10 z-30 rounded-l-xl" />
+                          <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full font-medium">
+                            {project.category}
+                          </span>
+                          <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full font-medium">
+                            {project.year}
+                          </span>
+                        </div>
 
-                            {/* Badges */}
-                            <div className="absolute top-3 left-3 flex items-center gap-2 z-40">
-                              <div className="bg-black/70 backdrop-blur-sm rounded-full p-1.5">
-                                <CategoryIcon className="w-3 h-3 text-white" />
-                              </div>
-                              <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full font-medium">
-                                {project.category}
-                              </span>
-                              <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded-full font-medium">
-                                {project.year}
-                              </span>
-                            </div>
-
-                            {/* Quick action links */}
-                            <div className="absolute bottom-3 right-3 flex gap-2 z-40">
-                              <a href={project.link} target="_blank" rel="noopener noreferrer"
-                                className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
-                                title="View Source Code">
-                                <FiGithub className="w-3 h-3" />
-                              </a>
-                              {project.demoLink && (
-                                <a href={project.demoLink} target="_blank" rel="noopener noreferrer"
-                                  className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
-                                  title="View Live Demo">
-                                  <FiExternalLink className="w-3 h-3" />
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        )}
+                        {/* Quick action links */}
+                        <div className="absolute bottom-3 right-3 flex gap-2 z-40">
+                          <a href={project.link} target="_blank" rel="noopener noreferrer"
+                            className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
+                            title="View Source Code">
+                            <FiGithub className="w-3 h-3" />
+                          </a>
+                          {project.demoLink && (
+                            <a href={project.demoLink} target="_blank" rel="noopener noreferrer"
+                              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300 transform hover:scale-110 shadow-lg"
+                              title="View Live Demo">
+                              <FiExternalLink className="w-3 h-3" />
+                            </a>
+                          )}
+                        </div>
                       </div>
 
                       {/* ── TEXT COLUMN ── */}
@@ -1015,6 +406,7 @@ const Projects = () => {
                           </div>
                         </div>
                       </div>
+
                     </div>
                   </div>
                 </motion.div>
